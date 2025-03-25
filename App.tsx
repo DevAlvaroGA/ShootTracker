@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { ImageBackground, StyleSheet, View } from 'react-native';
+import { ImageBackground, StyleSheet, View, SafeAreaView } from 'react-native';
 import * as Progress from 'react-native-progress';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from './assets/screens/Login'; // Asegúrate de que la ruta sea correcta
+
+const Stack = createStackNavigator();
 
 export default function App() {
-
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simula la carga de recursos
     const loadResources = () => {
       let progressInterval = setInterval(() => {
         setProgress((prevProgress) => {
           if (prevProgress >= 1) {
             clearInterval(progressInterval);
-            setIsLoading(false); // Simula que la carga ha terminado
+            setIsLoading(false);
             return 1;
           }
           return prevProgress + 0.1;
@@ -25,40 +28,55 @@ export default function App() {
     loadResources();
   }, []);
 
-  return (
-    <ImageBackground source={require('./assets/images/Airsoft_BW.png')} style={styles.background}>
-      {isLoading && (
-        <View style={styles.loadingContainer}>
-          <Progress.Bar progress={progress} width={340} color="#FB6600" />
-        </View>
-      )}
-      <View style={styles.logoContainer}>
-        <ImageBackground source={require('./assets/images/logo.png')} style={styles.logo} />
-      </View>
-    </ImageBackground>
-  );
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ImageBackground source={require('./assets/images/Airsoft_BW.png')} style={styles.background}>
+          <View style={styles.loadingContainer}>
+            <Progress.Bar progress={progress} width={340} color="#FB6600" borderColor="#FFFF" />
+          </View>
+          <View style={styles.logoContainer}>
+            <ImageBackground source={require('./assets/images/logo.png')} style={styles.logo} />
+          </View>
+        </ImageBackground>
+      </SafeAreaView>
+    );
+  } else {
+    return (
+      <SafeAreaView style={styles.container}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login" component={LoginScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   background: {
     flex: 1,
-    resizeMode: 'cover', // Asegura que la imagen de fondo cubra toda la pantalla
+    resizeMode: 'cover',
   },
   logoContainer: {
     flex: 1,
-    justifyContent: 'flex-end', // Alinea el logo en la parte inferior
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    marginBottom: 30, // Ajusta el margen inferior según tus necesidades
+    marginBottom: 30,
   },
   logo: {
-    width: 600, // Ajusta el ancho del logo según tus necesidades
-    height: 200, // Ajusta la altura del logo según tus necesidades
-    resizeMode: 'contain', 
+    width: 600,
+    height: 200,
+    resizeMode: 'contain',
   },
   loadingContainer: {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: [{ translateX: -170 }, { translateY: 410 }], // Centra la barra de progreso
+    transform: [{ translateX: -170 }, { translateY: 410 }],
   },
 });
