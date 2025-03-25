@@ -2,10 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { ImageBackground, StyleSheet, View, SafeAreaView } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './assets/screens/Login'; // Asegúrate de que la ruta sea correcta
 
-const Stack = createStackNavigator();
+type RootStackParamList = {
+  Login: undefined;
+  Home: undefined;
+  RecoverAccount: undefined;
+  Register: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [progress, setProgress] = useState(0);
