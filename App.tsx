@@ -4,6 +4,7 @@ import * as Progress from 'react-native-progress';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './assets/screens/Login'; // Asegúrate de que la ruta sea correcta
+import { globalStyles } from './assets/components/globalStyles';
 
 type RootStackParamList = {
   Login: undefined;
@@ -37,20 +38,20 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <ImageBackground source={require('./assets/images/Airsoft_BW.png')} style={styles.background}>
-          <View style={styles.loadingContainer}>
+      <SafeAreaView style={globalStyles.containerSplash}>
+        <ImageBackground source={require('./assets/images/Airsoft_BW.png')} style={globalStyles.backgroundSplash}>
+          <View style={globalStyles.loadingContainerSplash}>
             <Progress.Bar progress={progress} width={340} color="#FB6600" borderColor="#FFFF" />
           </View>
-          <View style={styles.logoContainer}>
-            <ImageBackground source={require('./assets/images/logo.png')} style={styles.logo} />
+          <View style={globalStyles.logoContainerSplash}>
+            <ImageBackground source={require('./assets/images/logo.png')} style={globalStyles.logoSplash} />
           </View>
         </ImageBackground>
       </SafeAreaView>
     );
   } else {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={globalStyles.containerSplash}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Login" component={LoginScreen} />
@@ -60,30 +61,3 @@ export default function App() {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-  },
-  logoContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  logo: {
-    width: 600,
-    height: 200,
-    resizeMode: 'contain',
-  },
-  loadingContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{ translateX: -170 }, { translateY: 410 }],
-  },
-});
