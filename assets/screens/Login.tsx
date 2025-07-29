@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ActivityIndicator, ImageBackground, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ActivityIndicator, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles'; // Importa los estilos globales desde tu archivo
+import { router} from "expo-router";
+
+//FIREBASE
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "@firebase/auth";
+import { auth } from "@/FireBaseconfig";
 
 type RootStackParamList = {
   Login: undefined;
@@ -12,9 +17,21 @@ type RootStackParamList = {
 
 const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Login'>) => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+    const logIn = async () => {
+    try {
+      const user = await (signInWithEmailAndPassword(auth,email,password));
+      if (user) router.replace('/tabs')
+    } catch (error:any) {
+      console.log(error);
+      Alert.alert("Inicio de sesión incorrecto", "error.message");
+    }
+  }
+
 
   const handleLogin = async () => {
     setError('');
@@ -72,12 +89,12 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
               <View style={globalStyles.inputWrapper}>
                 <TextInput
                   style={globalStyles.input}
-                  placeholder="Usuario"
+                  placeholder="Email"
                   placeholderTextColor="#888"
                   value={username}
-                  onChangeText={setUsername}
-                  accessibilityLabel="Usuario"
-                  accessibilityHint="Ingresa tu nombre de usuario"
+                  onChangeText={setEmail}
+                  accessibilityLabel="Email"
+                  accessibilityHint="Ingresa tu email"
                 />
               </View>
 

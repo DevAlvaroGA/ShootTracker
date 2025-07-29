@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ShootTracker",
-    "slug": "ShootTracker",
+    "name": "ShootTracker_cod",
+    "slug": "ShootTracker_cod",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.alvinotintx.ShootTracker_cod"
     },
     "web": {
       "favicon": "./assets/favicon.png"
