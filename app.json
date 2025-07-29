@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ShootTracker_cod",
-    "slug": "ShootTracker_cod",
+    "name": "ShootTracker",
+    "slug": "ShootTracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e1487613-f47f-4cfc-ac0d-136ce14c4269"
+      }
+    },
+    "owner": "alvinotintx"
   }
 }
