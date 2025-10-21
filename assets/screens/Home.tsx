@@ -1,0 +1,49 @@
+// assets/screens/Home.tsx
+import React from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground, Alert } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { globalStyles } from '../components/globalStyles';
+import { auth } from '@/firebaseConfig';
+import { signOut } from 'firebase/auth';
+
+type RootStackParamList = {
+  Login: undefined;
+  Home: undefined;
+  Register: undefined;
+};
+
+const HomeScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Home'>) => {
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigation.replace('Login'); // Vuelve al login
+    } catch (error) {
+      console.log("Error al cerrar sesión:", error);
+      Alert.alert("Error", "No se pudo cerrar sesión");
+    }
+  };
+
+  return (
+    <SafeAreaView style={globalStyles.container}>
+      <ImageBackground
+        source={require('../images/fondo.png')}
+        style={globalStyles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 28, color: '#fff', marginBottom: 20 }}>¡Hola Mundo!</Text>
+
+          <TouchableOpacity
+            style={globalStyles.loginButton}
+            onPress={handleLogout}
+          >
+            <Text style={globalStyles.loginButtonText}>Cerrar sesión</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </SafeAreaView>
+  );
+};
+
+export default HomeScreen;

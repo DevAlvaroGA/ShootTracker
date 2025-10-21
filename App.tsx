@@ -5,12 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './assets/screens/Login';
 import RegisterScreen from './assets/screens/Register';
+import HomeScreen from './assets/screens/Home'; // nueva pantalla Home
 import { globalStyles } from './assets/components/globalStyles';
 
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
-  RecoverAccount: undefined;
   Register: undefined;
 };
 
@@ -33,7 +33,6 @@ export default function App() {
         });
       }, 500);
     };
-
     loadResources();
   }, []);
 
@@ -66,7 +65,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        {/* Agrega las demás pantallas cuando las tengas */}
+        <Stack.Screen name="Home" component={HomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

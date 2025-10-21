@@ -1,60 +1,43 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ActivityIndicator, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { globalStyles } from '../components/globalStyles'; // Importa los estilos globales desde tu archivo
-import { router} from "expo-router";
-
-//FIREBASE
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "@firebase/auth";
-import { auth } from "@/FireBaseconfig";
+import { globalStyles } from '../components/globalStyles';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebaseConfig";
 
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
-  RecoverAccount: undefined;
   Register: undefined;
 };
 
 const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Login'>) => {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-    const logIn = async () => {
-    try {
-      const user = await (signInWithEmailAndPassword(auth,email,password));
-      if (user) router.replace('/tabs')
-    } catch (error:any) {
-      console.log(error);
-      Alert.alert("Inicio de sesión incorrecto", "error.message");
-    }
-  }
-
-
   const handleLogin = async () => {
     setError('');
 
-    // Validar campos vacíos antes de mostrar loading
-    if (!username.trim() || !password.trim()) {
-      setError('Por favor, ingresa usuario y contraseña.');
+    if (!email.trim() || !password.trim()) {
+      setError('Por favor, ingresa tu email y contraseña.');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Simulación de llamada a API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      if (username === 'test' && password === 'test') {
+      if (user) {
+        console.log("Usuario autenticado:", user.email);
         navigation.navigate('Home');
-      } else {
-        setError('Usuario o contraseña incorrectos.');
       }
-    } catch (e) {
-      setError('Error al iniciar sesión.');
+    } catch (error: any) {
+      console.log("Error en inicio de sesión:", error);
+      Alert.alert("Error", "Correo o contraseña incorrectos.");
     } finally {
       setLoading(false);
     }
@@ -67,34 +50,19 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
         style={globalStyles.backgroundImage}
         resizeMode="cover"
       >
-        {/* KeyboardAvoidingView para manejar el teclado */}
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // 'padding' para iOS, 'height' para Android
-          style={globalStyles.content} // Aplica el estilo de contenido aquí
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={globalStyles.content}
         >
-          {/* ScrollView para permitir el desplazamiento si el contenido es demasiado grande */}
           <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}>
-            {/*
-              Observación: Los elementos del logo (logoContainer y logoText)
-              fueron eliminados del JSX en esta versión de LoginScreen.
-              Si deseas que aparezcan, deberías re-añadirlos aquí:
-            */}
-            {/* <View style={globalStyles.logoContainer}>
-              <Text style={globalStyles.logoText}>SHOOT</Text>
-              <Text style={globalStyles.logoText}>TRACKER</Text>
-            </View> */}
-
-            {/* Formulario */}
             <View style={globalStyles.formContainer}>
               <View style={globalStyles.inputWrapper}>
                 <TextInput
                   style={globalStyles.input}
                   placeholder="Email"
                   placeholderTextColor="#888"
-                  value={username}
+                  value={email}
                   onChangeText={setEmail}
-                  accessibilityLabel="Email"
-                  accessibilityHint="Ingresa tu email"
                 />
               </View>
 
@@ -106,57 +74,28 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
                   secureTextEntry
                   value={password}
                   onChangeText={setPassword}
-                  accessibilityLabel="Contraseña"
-                  accessibilityHint="Ingresa tu contraseña"
                 />
               </View>
 
-              {loading && (
-                <View style={globalStyles.loadingContainer}>
-                  <ActivityIndicator size="large" color="#FFA500" />
-                </View>
-              )}
+              {loading && <ActivityIndicator size="large" color="#FFA500" />}
 
-              {error ? (
-                <View style={globalStyles.errorContainer}>
-                  <Text style={globalStyles.errorText}>{error}</Text>
-                </View>
-              ) : null}
+              {error ? <Text style={globalStyles.errorText}>{error}</Text> : null}
 
               <TouchableOpacity
                 style={globalStyles.loginButton}
                 onPress={handleLogin}
                 disabled={loading}
-                accessibilityLabel="Iniciar sesión"
-                accessibilityHint="Presiona para iniciar sesión"
               >
                 <Text style={globalStyles.loginButtonText}>Iniciar Sesión</Text>
               </TouchableOpacity>
 
-              {/* Enlaces adicionales */}
-              <TouchableOpacity
-                onPress={() => navigation.navigate('RecoverAccount')}
-                style={globalStyles.forgotPasswordContainer}
-                accessibilityLabel="Recuperar contraseña"
-                accessibilityHint="Presiona para recuperar tu contraseña"
-              >
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                 <Text style={globalStyles.forgotPasswordText}>
-                  ¿Olvidaste tu contraseña? <Text style={globalStyles.highlightText}>Recuperar contraseña</Text>
+                  ¿No tienes cuenta? <Text style={globalStyles.highlightText}>Registrarse</Text>
                 </Text>
               </TouchableOpacity>
             </View>
 
-            {/* Botón crear cuenta */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Register')}
-              style={globalStyles.createAccountButton}
-              accessibilityLabel="Crear cuenta"
-              accessibilityHint="Presiona para crear una cuenta nueva"
-            >
-              <Text style={globalStyles.createAccountText}>Crear cuenta nueva</Text>
-            </TouchableOpacity>
-
-            {/* Versión */}
             <Text style={globalStyles.versionText}>ShootTracker v20.3.25 [Build 1]</Text>
           </ScrollView>
         </KeyboardAvoidingView>

@@ -1,23 +1,16 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  ImageBackground,
-  ActivityIndicator
+  View, Text, TextInput, TouchableOpacity, SafeAreaView,
+  ScrollView, KeyboardAvoidingView, Platform, ImageBackground, ActivityIndicator, Alert
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from "@/firebaseConfig";
 
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
-  RecoverAccount: undefined;
   Register: undefined;
 };
 
@@ -45,13 +38,14 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
     setLoading(true);
 
     try {
-      // Simula el registro (puedes cambiar esto por una llamada real a tu API)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Suponiendo que se registró correctamente
-      navigation.navigate('Login');
-    } catch (e) {
-      setError('Error al crear la cuenta.');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log("Usuario registrado:", user.email);
+      Alert.alert("Registro exitoso", "Tu cuenta se ha creado correctamente.");
+      navigation.navigate('Home');
+    } catch (error: any) {
+      console.log("Error en registro:", error);
+      Alert.alert("Error al registrarse", error.message);
     } finally {
       setLoading(false);
     }
@@ -102,17 +96,8 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
                 secureTextEntry
               />
 
-              {loading && (
-                <View style={globalStyles.loadingContainer}>
-                  <ActivityIndicator size="large" color="#FFA500" />
-                </View>
-              )}
-
-              {error ? (
-                <View style={globalStyles.errorContainer}>
-                  <Text style={globalStyles.errorText}>{error}</Text>
-                </View>
-              ) : null}
+              {loading && <ActivityIndicator size="large" color="#FFA500" />}
+              {error ? <Text style={globalStyles.errorText}>{error}</Text> : null}
 
               <TouchableOpacity
                 style={globalStyles.loginButton}
