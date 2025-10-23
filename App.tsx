@@ -6,12 +6,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './assets/screens/Login';
 import RegisterScreen from './assets/screens/Register';
 import HomeScreen from './assets/screens/Home'; // nueva pantalla Home
+import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import { globalStyles } from './assets/components/globalStyles';
+import * as Font from 'expo-font'; // <= importamos expo-font para las fuentes personalizadas
 
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -21,7 +24,13 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadResources = () => {
+    const loadResources = async () => {
+
+      // 👇 Cargar la fuente personalizada
+      await Font.loadAsync({
+        Michroma: require('./assets/fonts/Michroma-Regular.ttf'),
+      });
+
       let progressInterval = setInterval(() => {
         setProgress((prevProgress) => {
           if (prevProgress >= 1) {
@@ -66,6 +75,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

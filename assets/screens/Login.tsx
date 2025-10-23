@@ -9,6 +9,7 @@ type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
+  ForgotPassword: undefined; // futura pantalla
 };
 
 const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Login'>) => {
@@ -82,21 +83,29 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
               {error ? <Text style={globalStyles.errorText}>{error}</Text> : null}
 
               <TouchableOpacity
-                style={globalStyles.loginButton}
+                style={globalStyles.LOGIN_Button}
                 onPress={handleLogin}
                 disabled={loading}
               >
-                <Text style={globalStyles.loginButtonText}>Iniciar Sesión</Text>
+                <Text style={globalStyles.LOGIN_ButtonText}>Iniciar Sesión</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={globalStyles.forgotPasswordText}>
-                  ¿No tienes cuenta? <Text style={globalStyles.highlightText}>Registrarse</Text>
+              {/* 🔽 Nuevo texto de recuperar contraseña */}
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} style={{ marginTop: 10, marginBottom: 10 }}>
+                <Text style={globalStyles.LOGIN_forgotPasswordText}>
+                  ¿Olvidaste tu contraseña?
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <Text style={globalStyles.versionText}>ShootTracker v20.3.25 [Build 1]</Text>
+            {/* 🔼 Nuevo texto presionable para crear cuenta */}
+            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ alignItems: 'center', marginBottom: 10 }}>
+              <Text style={globalStyles.LOGIN_newAccountText}>Crear cuenta nueva</Text>
+            </TouchableOpacity>
+
+            <Text style={globalStyles.versionText}>
+              ShootTracker v20.3.25 [Build 1]
+            </Text>
           </ScrollView>
         </KeyboardAvoidingView>
       </ImageBackground>

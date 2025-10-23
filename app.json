@@ -30,6 +30,9 @@
         "projectId": "e1487613-f47f-4cfc-ac0d-136ce14c4269"
       }
     },
-    "owner": "alvinotintx"
+    "owner": "alvinotintx",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

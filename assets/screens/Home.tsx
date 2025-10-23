@@ -35,10 +35,10 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, '
           <Text style={{ fontSize: 28, color: '#fff', marginBottom: 20 }}>¡Hola Mundo!</Text>
 
           <TouchableOpacity
-            style={globalStyles.loginButton}
+            style={globalStyles.LOGIN_Button}
             onPress={handleLogout}
           >
-            <Text style={globalStyles.loginButtonText}>Cerrar sesión</Text>
+            <Text style={globalStyles.LOGIN_ButtonText}>Cerrar sesión</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>

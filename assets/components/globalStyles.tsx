@@ -5,7 +5,29 @@ import * as Colors from './colors'; // Asumiendo que tienes este archivo de colo
 const { width, height } = Dimensions.get('window');
 
 export const globalStyles = StyleSheet.create({
-    //IMAGEN DE FONDO (Si usas un enfoque de fondo con dos capas, como se sugiere aquí)
+    //---------------- GENERAL ----------------
+    versionText: {
+        color: '#888888',
+        fontSize: 12,
+        textAlign: 'center',
+        fontFamily: 'Michroma',
+    },
+    inputWrapper: {
+        marginBottom: 20,
+    },
+    input: {
+        height: 56,
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        borderColor: '#FF8800', // O Colors.primaryOrange
+        borderRadius: 8,
+        paddingHorizontal: 20,
+        fontSize: 16,
+        color: '#FFFFFF',
+        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+    },
+
+    //---------------- IMAGEN DE FONDO (Si usas un enfoque de fondo con dos capas, como se sugiere aquí)
     containerFondo: {
         flex: 1,
     },
@@ -28,7 +50,8 @@ export const globalStyles = StyleSheet.create({
         flex: 1,
         zIndex: 1, // Asegura que el contenido esté por encima del fondo
     },
-    //SPLASH SCREEN
+
+    //---------------- SPLASH SCREEN ----------------
     containerSplash: {
         flex: 1,
     },
@@ -54,7 +77,7 @@ export const globalStyles = StyleSheet.create({
         transform: [{ translateX: -170 }, { translateY: 410 }],
     },
 
-    //LOGIN
+    //---------------- LOGIN ----------------
     container: {
         flex: 1,
     },
@@ -93,19 +116,6 @@ export const globalStyles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 40,
     },
-    inputWrapper: {
-        marginBottom: 20,
-    },
-    input: {
-        height: 56,
-        backgroundColor: 'transparent',
-        borderWidth: 2,
-        borderColor: '#FF8800', // O Colors.primaryOrange
-        borderRadius: 8,
-        paddingHorizontal: 20,
-        fontSize: 16,
-        color: '#FFFFFF',
-    },
     loadingContainer: {
         alignItems: 'center',
         marginVertical: 20,
@@ -118,8 +128,9 @@ export const globalStyles = StyleSheet.create({
         color: '#FF4444',
         fontSize: 14,
         textAlign: 'center',
+        fontFamily: 'Michroma',
     },
-    loginButton: {
+    LOGIN_Button: {
         backgroundColor: '#FF8800', // O Colors.primaryOrange
         height: 56,
         borderRadius: 8,
@@ -127,36 +138,119 @@ export const globalStyles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 20,
     },
-    loginButtonText: {
+    LOGIN_ButtonText: {
         color: '#000000',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'Michroma',
+        alignItems: 'center',
     },
     forgotPasswordContainer: {
         alignItems: 'center',
-        marginTop: 24,
+        marginTop: 26,
     },
-    forgotPasswordText: {
+    LOGIN_forgotPasswordText: {
         color: '#CCCCCC',
-        fontSize: 14,
+        fontSize: 15,
         textAlign: 'center',
+        marginTop: 4,
+        fontFamily: 'Michroma',
     },
-    highlightText: {
-        color: '#FF8800', // O Colors.primaryOrange
-        fontWeight: 'bold',
+    LOGIN_newAccountText: {
+        color: '#FF8800',
+        fontSize: 15,
+        fontFamily: 'Michroma',
     },
-    createAccountButton: {
+
+    //---------------- REGISTER ----------------
+    REGISTER_input: {
+        height: 56,
+        width: '100%',
+        marginBottom: 15,
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        borderColor: '#FF8800', // O Colors.primaryOrange
+        borderRadius: 8,
+        paddingHorizontal: 20,
+        fontSize: 16,
+        color: '#FFFFFF',
+        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+    },
+    REGISTER_formContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
+        paddingVertical: 40,
+    },
+    REGISTER_Button: {
+        backgroundColor: '#FF8800', // O Colors.primaryOrange
+        width: '80%',
+        height: 56,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    REGISTER_ButtonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontFamily: 'Michroma',
+        alignItems: 'center',
+    },
+    REGISTER_HaveAccountText: {
+        color: '#CCCCCC',
+        fontSize: 15,
+        textAlign: 'center',
+        marginTop: 4,
+        fontFamily: 'Michroma',
+    },
+
+    //---------------- FORGOTPASSWORD ----------------
+    PASSWORD_input: {
+        height: 56,
+        width: '80%',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        borderColor: '#FF8800', // O Colors.primaryOrange
+        borderRadius: 8,
+        paddingHorizontal: 20,
+        fontSize: 16,
+        color: '#FFFFFF',
+        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+    },
+    PASSWORD_formContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 40,
+    },
+    PASSWORD_titleText: {
+        fontSize: 28,
+        color: '#FFF',
+        fontFamily: 'Michroma',
+        textAlign: 'center',
         marginBottom: 20,
     },
-    createAccountText: {
-        color: '#FF8800', // O Colors.primaryOrange
+    PASSWORD_Button: {
+        backgroundColor: '#FF8800', // O Colors.primaryOrange
+        width: '80%',
+        height: 56,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    PASSWORD_ButtonText: {
+        color: '#000000',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'Michroma',
+        alignItems: 'center',
     },
-    versionText: {
-        color: '#888888',
-        fontSize: 12,
+    PASSWORD_HomeText: {
+        color: '#CCCCCC',
+        fontSize: 15,
         textAlign: 'center',
+        marginTop: 4,
+        fontFamily: 'Michroma',
     },
+
 });

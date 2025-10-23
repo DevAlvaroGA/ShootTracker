@@ -63,16 +63,16 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
           style={globalStyles.content}
         >
           <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-            <View style={globalStyles.formContainer}>
+            <View style={globalStyles.REGISTER_formContainer}>
               <TextInput
-                style={globalStyles.input}
+                style={globalStyles.REGISTER_input}
                 placeholder="Nombre de usuario"
                 placeholderTextColor="#888"
                 value={username}
                 onChangeText={setUsername}
               />
               <TextInput
-                style={globalStyles.input}
+                style={globalStyles.REGISTER_input}
                 placeholder="Correo electrónico"
                 placeholderTextColor="#888"
                 value={email}
@@ -80,7 +80,7 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
                 keyboardType="email-address"
               />
               <TextInput
-                style={globalStyles.input}
+                style={globalStyles.REGISTER_input}
                 placeholder="Contraseña"
                 placeholderTextColor="#888"
                 value={password}
@@ -88,7 +88,7 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
                 secureTextEntry
               />
               <TextInput
-                style={globalStyles.input}
+                style={globalStyles.REGISTER_input}
                 placeholder="Confirmar contraseña"
                 placeholderTextColor="#888"
                 value={confirmPassword}
@@ -100,16 +100,16 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
               {error ? <Text style={globalStyles.errorText}>{error}</Text> : null}
 
               <TouchableOpacity
-                style={globalStyles.loginButton}
+                style={globalStyles.REGISTER_Button}
                 onPress={handleRegister}
                 disabled={loading}
               >
-                <Text style={globalStyles.loginButtonText}>Registrarse</Text>
+                <Text style={globalStyles.REGISTER_ButtonText}>Registrarse</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text style={globalStyles.forgotPasswordText}>
-                  ¿Ya tienes cuenta? <Text style={globalStyles.highlightText}>Iniciar sesión</Text>
+                <Text style={globalStyles.REGISTER_HaveAccountText}>
+                  ¿Ya tienes cuenta? <Text style={globalStyles.REGISTER_HaveAccountText}>Iniciar sesión</Text>
                 </Text>
               </TouchableOpacity>
             </View>
