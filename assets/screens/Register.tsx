@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, SafeAreaView,
-  ScrollView, KeyboardAvoidingView, Platform, ImageBackground, ActivityIndicator, Alert
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from "@/firebaseConfig";
 
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
+  Register2: { email: string; password: string; username: string }; // Pasamos datos a la siguiente pantalla
 };
 
 const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Register'>) => {
@@ -22,14 +29,16 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = async () => {
+  const handleRegister = () => {
     setError('');
 
+    // Validación de campos
     if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       setError('Por favor, completa todos los campos.');
       return;
     }
 
+    // Validación de contraseñas
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden.');
       return;
@@ -37,18 +46,9 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
 
     setLoading(true);
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log("Usuario registrado:", user.email);
-      Alert.alert("Registro exitoso", "Tu cuenta se ha creado correctamente.");
-      navigation.navigate('Home');
-    } catch (error: any) {
-      console.log("Error en registro:", error);
-      Alert.alert("Error al registrarse", error.message);
-    } finally {
-      setLoading(false);
-    }
+    // Navegamos a Register2 pasando los datos
+    navigation.navigate('Register2', { email, password, username });
+    setLoading(false);
   };
 
   return (
@@ -64,6 +64,8 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
         >
           <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
             <View style={globalStyles.REGISTER_formContainer}>
+              <Text style={globalStyles.REGISTER_titleText}>Registro</Text>
+
               <TextInput
                 style={globalStyles.REGISTER_input}
                 placeholder="Nombre de usuario"
@@ -104,7 +106,7 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
                 onPress={handleRegister}
                 disabled={loading}
               >
-                <Text style={globalStyles.REGISTER_ButtonText}>Registrarse</Text>
+                <Text style={globalStyles.REGISTER_ButtonText}>Continuar</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>

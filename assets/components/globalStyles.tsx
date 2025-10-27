@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 export const globalStyles = StyleSheet.create({
     //---------------- GENERAL ----------------
     versionText: {
-        color: '#888888',
+        color: Colors.grisOscuro,
         fontSize: 12,
         textAlign: 'center',
         fontFamily: 'Michroma',
@@ -19,11 +19,11 @@ export const globalStyles = StyleSheet.create({
         height: 56,
         backgroundColor: 'transparent',
         borderWidth: 2,
-        borderColor: '#FF8800', // O Colors.primaryOrange
+        borderColor: Colors.naranjaPrincipal, // O Colors.primaryOrange
         borderRadius: 8,
         paddingHorizontal: 20,
         fontSize: 16,
-        color: '#FFFFFF',
+        color: Colors.blanco,
         fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
     },
 
@@ -104,7 +104,7 @@ export const globalStyles = StyleSheet.create({
     logoText: { // Asegúrate de que este estilo exista si planeas usar el logo
         fontSize: 42,
         fontWeight: 'bold',
-        color: '#FFA500', // O Colors.primaryOrange si tienes un archivo de colores
+        color: Colors.naranjaPrincipal, // O Colors.primaryOrange si tienes un archivo de colores
         textAlign: 'center',
         letterSpacing: 3,
         textShadowColor: 'rgba(0,0,0,0.8)',
@@ -125,13 +125,13 @@ export const globalStyles = StyleSheet.create({
         marginVertical: 10,
     },
     errorText: {
-        color: '#FF4444',
+        color: Colors.rojoERROR,
         fontSize: 14,
         textAlign: 'center',
         fontFamily: 'Michroma',
     },
     LOGIN_Button: {
-        backgroundColor: '#FF8800', // O Colors.primaryOrange
+        backgroundColor: Colors.naranjaPrincipal,
         height: 56,
         borderRadius: 8,
         justifyContent: 'center',
@@ -139,7 +139,7 @@ export const globalStyles = StyleSheet.create({
         marginTop: 20,
     },
     LOGIN_ButtonText: {
-        color: '#000000',
+        color: Colors.negro,
         fontSize: 16,
         fontFamily: 'Michroma',
         alignItems: 'center',
@@ -149,7 +149,7 @@ export const globalStyles = StyleSheet.create({
         marginTop: 26,
     },
     LOGIN_forgotPasswordText: {
-        color: '#CCCCCC',
+        color: Colors.gris,
         fontSize: 15,
         textAlign: 'center',
         marginTop: 4,
@@ -168,11 +168,11 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 15,
         backgroundColor: 'transparent',
         borderWidth: 2,
-        borderColor: '#FF8800', // O Colors.primaryOrange
+        borderColor: Colors.naranjaPrincipal,
         borderRadius: 8,
         paddingHorizontal: 20,
         fontSize: 16,
-        color: '#FFFFFF',
+        color: Colors.blanco,
         fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
     },
     REGISTER_formContainer: {
@@ -182,7 +182,7 @@ export const globalStyles = StyleSheet.create({
         paddingVertical: 40,
     },
     REGISTER_Button: {
-        backgroundColor: '#FF8800', // O Colors.primaryOrange
+        backgroundColor: Colors.naranjaPrincipal,
         width: '80%',
         height: 56,
         borderRadius: 8,
@@ -191,17 +191,24 @@ export const globalStyles = StyleSheet.create({
         marginTop: 20,
     },
     REGISTER_ButtonText: {
-        color: '#000000',
+        color: Colors.negro,
         fontSize: 16,
         fontFamily: 'Michroma',
         alignItems: 'center',
     },
     REGISTER_HaveAccountText: {
-        color: '#CCCCCC',
+        color: Colors.gris,
         fontSize: 15,
         textAlign: 'center',
         marginTop: 4,
         fontFamily: 'Michroma',
+    },
+    REGISTER_titleText: {
+        fontSize: 28,
+        color: '#FFF',
+        fontFamily: 'Michroma',
+        textAlign: 'center',
+        marginBottom: 20,
     },
 
     //---------------- FORGOTPASSWORD ----------------
@@ -210,11 +217,11 @@ export const globalStyles = StyleSheet.create({
         width: '80%',
         backgroundColor: 'transparent',
         borderWidth: 2,
-        borderColor: '#FF8800', // O Colors.primaryOrange
+        borderColor: Colors.naranjaPrincipal,
         borderRadius: 8,
         paddingHorizontal: 20,
         fontSize: 16,
-        color: '#FFFFFF',
+        color: Colors.gris,
         fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
     },
     PASSWORD_formContainer: {
@@ -231,7 +238,7 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 20,
     },
     PASSWORD_Button: {
-        backgroundColor: '#FF8800', // O Colors.primaryOrange
+        backgroundColor: Colors.naranjaPrincipal, // O Colors.primaryOrange
         width: '80%',
         height: 56,
         borderRadius: 8,
@@ -240,13 +247,13 @@ export const globalStyles = StyleSheet.create({
         marginTop: 20,
     },
     PASSWORD_ButtonText: {
-        color: '#000000',
+        color: Colors.negro,
         fontSize: 16,
         fontFamily: 'Michroma',
         alignItems: 'center',
     },
     PASSWORD_HomeText: {
-        color: '#CCCCCC',
+        color: Colors.gris,
         fontSize: 15,
         textAlign: 'center',
         marginTop: 4,

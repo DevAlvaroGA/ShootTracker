@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './assets/screens/Login';
 import RegisterScreen from './assets/screens/Register';
+import Register2Screen from './assets/screens/Register2';
 import HomeScreen from './assets/screens/Home'; // nueva pantalla Home
 import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import { globalStyles } from './assets/components/globalStyles';
@@ -14,6 +15,7 @@ type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
+  Register2: { email: string; password: string; username: string };
   ForgotPassword: undefined;
 };
 
@@ -74,6 +76,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Register2" component={Register2Screen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       </Stack.Navigator>
