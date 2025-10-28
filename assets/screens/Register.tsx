@@ -10,15 +10,17 @@ import {
   Platform,
   ImageBackground,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles';
+import Toast from 'react-native-toast-message';
 
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
-  Register2: { email: string; password: string; username: string }; // Pasamos datos a la siguiente pantalla
+  Register2: { email: string; password: string; username: string };
 };
 
 const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Register'>) => {
@@ -29,26 +31,69 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Validación de correo
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  // Validación de contraseña
+  const validatePassword = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    return regex.test(password);
+  };
+
   const handleRegister = () => {
     setError('');
 
-    // Validación de campos
+    // Reemplaza setError con esto:
     if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      setError('Por favor, completa todos los campos.');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Por favor, completa todos los campos.',
+        visibilityTime: 3000,
+      });
       return;
     }
 
-    // Validación de contraseñas
+    if (!validateEmail(email)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Correo electrónico no válido.',
+        visibilityTime: 3000,
+      });
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Contraseña débil. Debe tener 8 caracteres, mayúscula, minúscula y un número.',
+        visibilityTime: 3000,
+      });
+      return;
+    }
+
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden.');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Las contraseñas no coinciden.',
+        visibilityTime: 3000,
+      });
       return;
     }
 
     setLoading(true);
 
-    // Navegamos a Register2 pasando los datos
-    navigation.navigate('Register2', { email, password, username });
-    setLoading(false);
+    // Si todo es correcto, pasamos a la siguiente pantalla
+    setTimeout(() => {
+      navigation.navigate('Register2', { email, password, username });
+      setLoading(false);
+    }, 800);
   };
 
   return (
@@ -80,6 +125,7 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
+                autoCapitalize="none"
               />
               <TextInput
                 style={globalStyles.REGISTER_input}
@@ -111,7 +157,10 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
 
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={globalStyles.REGISTER_HaveAccountText}>
-                  ¿Ya tienes cuenta? <Text style={globalStyles.REGISTER_HaveAccountText}>Iniciar sesión</Text>
+                  ¿Ya tienes cuenta?{' '}
+                  <Text style={[globalStyles.REGISTER_HaveAccountText, { fontWeight: 'bold' }]}>
+                    Iniciar sesión
+                  </Text>
                 </Text>
               </TouchableOpacity>
             </View>

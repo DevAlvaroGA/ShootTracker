@@ -10,7 +10,6 @@ import {
     Platform,
     ImageBackground,
     ActivityIndicator,
-    Alert,
     StyleSheet,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -19,6 +18,7 @@ import { globalStyles } from "../components/globalStyles";
 import { db, auth } from "@/firebaseConfig";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import Toast from "react-native-toast-message";
 
 type RootStackParamList = {
     Login: undefined;
@@ -36,17 +36,27 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
     const [month, setMonth] = useState(1);
     const [year, setYear] = useState(2000);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
 
     const handleSaveData = async () => {
-        setError("");
-
+        // Validación de campos vacíos
         if (!name.trim() || !surnames.trim()) {
-            setError("Por favor, completa todos los campos.");
+            Toast.show({ type: "error", text1: "Error", text2: "Completa todos los campos.", visibilityTime: 3000 });
             return;
         }
 
-        const dateBirth = new Date(year, month - 1, day);
+        const birthDate = new Date(year, month - 1, day);
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear() - (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate()) ? 1 : 0);
+
+        // Validación fecha coherente
+        if (birthDate > today) {
+            Toast.show({ type: "error", text1: "Error", text2: "La fecha de nacimiento no puede ser futura.", visibilityTime: 3000 });
+            return;
+        }
+        if (age < 14) {
+            Toast.show({ type: "error", text1: "Error", text2: "Debes tener al menos 14 años para registrarte.", visibilityTime: 3000 });
+            return;
+        }
 
         setLoading(true);
 
@@ -58,17 +68,17 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                 NAME: name,
                 SURNAMES: surnames,
                 USERNAME: username,
-                DATE_BIRTH: dateBirth,
+                DATE_BIRTH: birthDate,
                 REGISTER_DATE: serverTimestamp(),
                 DELETED_AT: null,
                 DELETE_MARK: "N",
             });
 
-            Alert.alert("Registro completado", "Tu cuenta y perfil se han creado correctamente.");
+            Toast.show({ type: "success", text1: "Registro completado", text2: "Tu cuenta y perfil se han creado correctamente.", visibilityTime: 3000 });
             navigation.navigate("Home");
         } catch (error: any) {
             console.error("❌ Error al crear usuario/guardar datos:", error);
-            Alert.alert("Error", `No se pudieron guardar tus datos: ${error.message}`);
+            Toast.show({ type: "error", text1: "Error", text2: `No se pudieron guardar tus datos: ${error.message}`, visibilityTime: 3000 });
         } finally {
             setLoading(false);
         }
@@ -76,15 +86,8 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
 
     return (
         <SafeAreaView style={globalStyles.container}>
-            <ImageBackground
-                source={require("../images/fondo.png")}
-                style={globalStyles.backgroundImage}
-                resizeMode="cover"
-            >
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    style={globalStyles.content}
-                >
+            <ImageBackground source={require("../images/fondo.png")} style={globalStyles.backgroundImage} resizeMode="cover">
+                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={globalStyles.content}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
                         <View style={globalStyles.REGISTER_formContainer}>
                             <Text style={globalStyles.REGISTER_titleText}>Completa tu perfil</Text>
@@ -132,7 +135,7 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                                     </Picker>
                                 </View>
 
-                                <View style={styles.pickerWrapper}>
+                                <View style={[styles.pickerWrapper, styles.yearPicker]}>
                                     <Picker
                                         style={styles.picker}
                                         dropdownIconColor="#FB6600"
@@ -147,13 +150,8 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                             </View>
 
                             {loading && <ActivityIndicator size="large" color="#FFA500" />}
-                            {error ? <Text style={globalStyles.errorText}>{error}</Text> : null}
 
-                            <TouchableOpacity
-                                style={globalStyles.REGISTER_Button}
-                                onPress={handleSaveData}
-                                disabled={loading}
-                            >
+                            <TouchableOpacity style={globalStyles.REGISTER_Button} onPress={handleSaveData} disabled={loading}>
                                 <Text style={globalStyles.REGISTER_ButtonText}>Finalizar registro</Text>
                             </TouchableOpacity>
                         </View>
@@ -178,6 +176,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#FB6600",
         justifyContent: "center",
+    },
+    yearPicker: {
+        flex: 1.2, // hacemos el picker de año un poco más ancho
     },
     picker: {
         color: "#000",

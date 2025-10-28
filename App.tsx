@@ -10,6 +10,7 @@ import HomeScreen from './assets/screens/Home'; // nueva pantalla Home
 import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import { globalStyles } from './assets/components/globalStyles';
 import * as Font from 'expo-font'; // <= importamos expo-font para las fuentes personalizadas
+import Toast from 'react-native-toast-message'; // <= importamos Toast
 
 type RootStackParamList = {
   Login: undefined;
@@ -28,7 +29,7 @@ export default function App() {
   useEffect(() => {
     const loadResources = async () => {
 
-      // 👇 Cargar la fuente personalizada
+      // Cargar la fuente personalizada
       await Font.loadAsync({
         Michroma: require('./assets/fonts/Michroma-Regular.ttf'),
       });
@@ -72,14 +73,19 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Register2" component={Register2Screen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Register2" component={Register2Screen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+
+      {/* Toast debe ir siempre fuera de NavigationContainer */}
+      <Toast />
+    </>
   );
 }
