@@ -7,17 +7,19 @@ import LoginScreen from './assets/screens/Login';
 import RegisterScreen from './assets/screens/Register';
 import Register2Screen from './assets/screens/Register2';
 import HomeScreen from './assets/screens/Home'; // nueva pantalla Home
+import NewGameScreen from './assets/screens/NewGame'; // nueva pantalla NewGame
 import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import { globalStyles } from './assets/components/globalStyles';
 import * as Font from 'expo-font'; // <= importamos expo-font para las fuentes personalizadas
 import Toast from 'react-native-toast-message'; // <= importamos Toast
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
   Register2: { email: string; password: string; username: string };
   ForgotPassword: undefined;
+  NewGame: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -81,6 +83,7 @@ export default function App() {
           <Stack.Screen name="Register2" component={Register2Screen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="NewGame" component={NewGameScreen} />
         </Stack.Navigator>
       </NavigationContainer>
 

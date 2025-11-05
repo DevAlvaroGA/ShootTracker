@@ -75,7 +75,7 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
             });
 
             Toast.show({ type: "success", text1: "Registro completado", text2: "Tu cuenta y perfil se han creado correctamente.", visibilityTime: 3000 });
-            navigation.navigate("Home");
+            navigation.navigate("Login");
         } catch (error: any) {
             console.error("❌ Error al crear usuario/guardar datos:", error);
             Toast.show({ type: "error", text1: "Error", text2: `No se pudieron guardar tus datos: ${error.message}`, visibilityTime: 3000 });
