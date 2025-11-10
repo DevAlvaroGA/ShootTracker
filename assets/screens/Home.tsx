@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground, Alert, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import { globalStyles } from '../components/globalStyles';
 import { auth } from '@/firebaseConfig';
 import { signOut } from 'firebase/auth';
@@ -41,38 +42,14 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, '
 
         {/* 🔹 Botón flotante “+” */}
         <TouchableOpacity
-          style={styles.floatingButton}
+          style={globalStyles.floatingButton}
           onPress={() => navigation.navigate('NewGame')}
         >
-          <Text style={styles.floatingButtonText}>+</Text>
+          <Ionicons name="add" size={32} color="white" />
         </TouchableOpacity>
       </ImageBackground>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  floatingButton: {
-    position: 'absolute',
-    bottom: 25,
-    right: 25,
-    backgroundColor: '#FB6600',
-    width: 65,
-    height: 65,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5, // sombra Android
-    shadowColor: '#000', // sombra iOS
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  floatingButtonText: {
-    color: '#fff',
-    fontSize: 36,
-    lineHeight: 36,
-  },
-});
 
 export default HomeScreen;

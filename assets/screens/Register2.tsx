@@ -108,10 +108,10 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                             />
 
                             <Text style={{ color: "#888", marginTop: 10, marginBottom: 5 }}>Fecha de nacimiento</Text>
-                            <View style={styles.pickerContainer}>
-                                <View style={styles.pickerWrapper}>
+                            <View style={globalStyles.pickerContainer}>
+                                <View style={globalStyles.pickerWrapper}>
                                     <Picker
-                                        style={styles.picker}
+                                        style={globalStyles.picker}
                                         dropdownIconColor="#FB6600"
                                         selectedValue={day}
                                         onValueChange={setDay}
@@ -122,9 +122,9 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                                     </Picker>
                                 </View>
 
-                                <View style={styles.pickerWrapper}>
+                                <View style={globalStyles.pickerWrapper}>
                                     <Picker
-                                        style={styles.picker}
+                                        style={globalStyles.picker}
                                         dropdownIconColor="#FB6600"
                                         selectedValue={month}
                                         onValueChange={setMonth}
@@ -135,9 +135,9 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                                     </Picker>
                                 </View>
 
-                                <View style={[styles.pickerWrapper, styles.yearPicker]}>
+                                <View style={[globalStyles.pickerWrapper, globalStyles.yearPicker]}>
                                     <Picker
-                                        style={styles.picker}
+                                        style={globalStyles.picker}
                                         dropdownIconColor="#FB6600"
                                         selectedValue={year}
                                         onValueChange={setYear}
@@ -161,28 +161,5 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
         </SafeAreaView>
     );
 };
-
-const styles = StyleSheet.create({
-    pickerContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginVertical: 5,
-    },
-    pickerWrapper: {
-        flex: 1,
-        backgroundColor: "#FFF",
-        borderRadius: 10,
-        marginHorizontal: 3,
-        borderWidth: 1,
-        borderColor: "#FB6600",
-        justifyContent: "center",
-    },
-    yearPicker: {
-        flex: 1.2, // hacemos el picker de año un poco más ancho
-    },
-    picker: {
-        color: "#000",
-    },
-});
 
 export default Register2;

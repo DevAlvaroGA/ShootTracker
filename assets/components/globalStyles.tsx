@@ -260,4 +260,96 @@ export const globalStyles = StyleSheet.create({
         fontFamily: 'Michroma',
     },
 
+    //---------------- NEW GAME ----------------
+    containerNG: {
+        flex: 1,
+    },
+    backgroundImageNG: {
+        flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: 'flex-start', // empezamos un poco más abajo
+        alignItems: 'center',
+        paddingTop: '20%', // margen superior de 20% para no tapar el banner
+        paddingBottom: 20,
+        paddingHorizontal: 20,
+    },
+    title: {
+        fontSize: 26,
+        color: Colors.naranjaPrincipal,
+        marginBottom: 20,
+        fontFamily: 'Michroma',
+        textAlign: 'center',
+    },
+    inputNG: {
+        width: '90%',
+        backgroundColor: 'transparent',
+        color: Colors.naranjaPrincipal,
+        fontSize: 16,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        borderColor: Colors.naranjaPrincipal,
+        padding: 12,
+        marginBottom: 12,
+        fontFamily: 'Michroma',
+    },
+    primaryButton: {
+        backgroundColor: Colors.naranjaPrincipal,
+        paddingVertical: 14,
+        paddingHorizontal: 30,
+        borderRadius: 10,
+        marginTop: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    primaryButtonText: {
+        color: Colors.negro,
+        fontSize: 18,
+        fontWeight: '600',
+        textAlign: 'center',
+        fontFamily: 'Michroma',
+    },
+
+    //---------------- EXTRAS ----------------
+    floatingButton: {
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+        backgroundColor: Colors.naranjaPrincipal,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    pickerContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center", // centra verticalmente los pickers
+        marginVertical: 10,
+    },
+    pickerWrapper: {
+        flex: 1,
+        backgroundColor: Colors.negro,
+        borderRadius: 10,
+        marginHorizontal: 3,
+        borderWidth: 1,
+        borderColor: Colors.naranjaPrincipal,
+        justifyContent: "center",
+        height: 45, // uniforme
+    },
+    yearPicker: {
+        flex: 1.2, // un poco más ancho para el año
+    },
+    picker: {
+        color: "#fff",
+    },
+
+
 });
