@@ -310,6 +310,32 @@ export const globalStyles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Michroma',
     },
+    rowContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginVertical: 10,
+    },
+
+    numberInputContainer: {
+        flex: 1,
+        marginHorizontal: 5,
+    },
+
+    numberInput: {
+        backgroundColor: "transparent",
+        borderColor: "#FB6600",
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        fontSize: 16,
+        color: "#FB6600",
+    },
+    label: {
+        color: Colors.gris,
+        fontSize: 14,
+        fontFamily: 'Michroma',
+    },
 
     //---------------- EXTRAS ----------------
     floatingButton: {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
     View,
     Text,
@@ -13,6 +13,9 @@ import { Picker } from "@react-native-picker/picker";
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles';
 import type { RootStackParamList } from '../../App';
+import { useFocusEffect } from '@react-navigation/native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+
 
 const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'NewGame'>) => {
     const [gameMode, setGameMode] = useState('');
@@ -26,6 +29,16 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
     const [day, setDay] = useState(1);
     const [month, setMonth] = useState(1);
     const [year, setYear] = useState(2025);
+
+    const scrollRef = useRef<ScrollView>(null);
+
+    useFocusEffect(
+        useCallback(() => {
+            // Cuando la pantalla se enfoca, volver al principio
+            scrollRef.current?.scrollTo({ y: 85, animated: false });
+        }, [])
+    );
+
 
     const handleSave = () => {
         const selectedDate = new Date(year, month - 1, day);
@@ -66,119 +79,129 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 style={globalStyles.backgroundImageNG}
                 resizeMode="cover"
             >
-                {/* 📜 Scroll ajustado al 20% inferior */}
-                <ScrollView
-                    contentContainerStyle={[globalStyles.scrollContainer, { paddingTop: '60%' }]}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <Text style={globalStyles.title}>Nueva Partida</Text>
+                {/* 📜 Scroll que empieza 20% más abajo del fondo */}
+                <View style={{ flex: 1, marginTop: '57%' }}>
+                    <ScrollView
+                        ref={scrollRef}
+                        contentContainerStyle={globalStyles.scrollContainer}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <Text style={globalStyles.title}>Nueva Partida</Text>
 
-                    <TextInput
-                        placeholder="Modo de juego"
-                        placeholderTextColor="#ccc"
-                        value={gameMode}
-                        onChangeText={setGameMode}
-                        style={globalStyles.inputNG}
-                    />
+                        <TextInput
+                            placeholder="Modo de juego"
+                            placeholderTextColor="#ccc"
+                            value={gameMode}
+                            onChangeText={setGameMode}
+                            style={globalStyles.inputNG}
+                        />
 
-                    <TextInput
-                        placeholder="Campo de juego"
-                        placeholderTextColor="#ccc"
-                        value={fieldName}
-                        onChangeText={setFieldName}
-                        style={globalStyles.inputNG}
-                    />
+                        <TextInput
+                            placeholder="Campo de juego"
+                            placeholderTextColor="#ccc"
+                            value={fieldName}
+                            onChangeText={setFieldName}
+                            style={globalStyles.inputNG}
+                        />
 
-                    {/* 📅 Selector de fecha (alineado en una sola fila) */}
-                    <Text style={{ color: "#888", marginTop: 10, marginBottom: 5 }}>Fecha de la partida</Text>
-                    <View style={[globalStyles.pickerContainer, { flexDirection: 'row', justifyContent: 'space-between' }]}>
-                        <View style={[globalStyles.pickerWrapper, { flex: 1, marginRight: 5 }]}>
-                            <Picker
-                                style={globalStyles.picker}
-                                dropdownIconColor="#FF8800"
-                                selectedValue={day}
-                                onValueChange={setDay}
-                            >
-                                {Array.from({ length: 31 }, (_, i) => (
-                                    <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
-                                ))}
-                            </Picker>
+                        {/* 📅 Selector de fecha */}
+                        <Text style={{ color: "#888", marginTop: 10, marginBottom: 5, fontFamily: 'Michroma' }}>Fecha de la partida</Text>
+                        <View style={globalStyles.pickerContainer}>
+                            <View style={[globalStyles.pickerWrapper, { flex: 1, marginRight: 5 }]}>
+                                <Picker
+                                    style={globalStyles.picker}
+                                    dropdownIconColor="#FB6600"
+                                    selectedValue={day}
+                                    onValueChange={setDay}
+                                >
+                                    {Array.from({ length: 31 }, (_, i) => (
+                                        <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
+                                    ))}
+                                </Picker>
+                            </View>
+
+                            <View style={[globalStyles.pickerWrapper, { flex: 1, marginHorizontal: 5 }]}>
+                                <Picker
+                                    style={globalStyles.picker}
+                                    dropdownIconColor="#FB6600"
+                                    selectedValue={month}
+                                    onValueChange={setMonth}
+                                >
+                                    {Array.from({ length: 12 }, (_, i) => (
+                                        <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
+                                    ))}
+                                </Picker>
+                            </View>
+
+                            <View style={[globalStyles.pickerWrapper, { flex: 1, marginLeft: 5 }]}>
+                                <Picker
+                                    style={globalStyles.picker}
+                                    dropdownIconColor="#FB6600"
+                                    selectedValue={year}
+                                    onValueChange={setYear}
+                                >
+                                    {Array.from({ length: 100 }, (_, i) => (
+                                        <Picker.Item key={i} label={`${2025 - i}`} value={2025 - i} />
+                                    ))}
+                                </Picker>
+                            </View>
                         </View>
 
-                        <View style={[globalStyles.pickerWrapper, { flex: 1, marginHorizontal: 5 }]}>
-                            <Picker
-                                style={globalStyles.picker}
-                                dropdownIconColor="#FB6600"
-                                selectedValue={month}
-                                onValueChange={setMonth}
-                            >
-                                {Array.from({ length: 12 }, (_, i) => (
-                                    <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
-                                ))}
-                            </Picker>
+                        <TextInput
+                            placeholder="Arma principal"
+                            placeholderTextColor="#ccc"
+                            value={weapon1}
+                            onChangeText={setWeapon1}
+                            style={globalStyles.inputNG}
+                        />
+
+                        <TextInput
+                            placeholder="Arma secundaria"
+                            placeholderTextColor="#ccc"
+                            value={weapon2}
+                            onChangeText={setWeapon2}
+                            style={globalStyles.inputNG}
+                        />
+
+                        <TextInput
+                            placeholder="Tiempo de juego (minutos)"
+                            placeholderTextColor="#ccc"
+                            keyboardType="numeric"
+                            value={playTime}
+                            onChangeText={setPlayTime}
+                            style={globalStyles.inputNG}
+                        />
+
+                        <View style={globalStyles.rowContainer}>
+                            <View style={globalStyles.numberInputContainer}>
+                                <Text style={globalStyles.label}>Kills</Text>
+                                <TextInput
+                                    style={globalStyles.numberInput}
+                                    keyboardType="numeric"
+                                    placeholder="0"
+                                    placeholderTextColor="#CCCCCC"
+
+                                />
+                            </View>
+
+                            <View style={globalStyles.numberInputContainer}>
+                                <Text style={globalStyles.label}>Muertes</Text>
+                                <TextInput
+                                    style={globalStyles.numberInput}
+                                    keyboardType="numeric"
+                                    placeholder="0"
+                                    placeholderTextColor="#CCCCCC"
+                                />
+                            </View>
                         </View>
 
-                        <View style={[globalStyles.pickerWrapper, { flex: 1, marginLeft: 5 }]}>
-                            <Picker
-                                style={globalStyles.picker}
-                                dropdownIconColor="#FB6600"
-                                selectedValue={year}
-                                onValueChange={setYear}
-                            >
-                                {Array.from({ length: 100 }, (_, i) => (
-                                    <Picker.Item key={i} label={`${2025 - i}`} value={2025 - i} />
-                                ))}
-                            </Picker>
-                        </View>
-                    </View>
 
-                    <TextInput
-                        placeholder="Arma principal"
-                        placeholderTextColor="#ccc"
-                        value={weapon1}
-                        onChangeText={setWeapon1}
-                        style={globalStyles.inputNG}
-                    />
+                        <TouchableOpacity style={globalStyles.primaryButton} onPress={handleSave}>
+                            <Text style={globalStyles.primaryButtonText}>Guardar Partida</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </View>
 
-                    <TextInput
-                        placeholder="Arma secundaria"
-                        placeholderTextColor="#ccc"
-                        value={weapon2}
-                        onChangeText={setWeapon2}
-                        style={globalStyles.inputNG}
-                    />
-
-                    <TextInput
-                        placeholder="Tiempo de juego (minutos)"
-                        placeholderTextColor="#ccc"
-                        keyboardType="numeric"
-                        value={playTime}
-                        onChangeText={setPlayTime}
-                        style={globalStyles.inputNG}
-                    />
-
-                    <TextInput
-                        placeholder="Kills"
-                        placeholderTextColor="#ccc"
-                        keyboardType="numeric"
-                        value={kills}
-                        onChangeText={setKills}
-                        style={globalStyles.inputNG}
-                    />
-
-                    <TextInput
-                        placeholder="Muertes"
-                        placeholderTextColor="#ccc"
-                        keyboardType="numeric"
-                        value={deaths}
-                        onChangeText={setDeaths}
-                        style={globalStyles.inputNG}
-                    />
-
-                    <TouchableOpacity style={globalStyles.primaryButton} onPress={handleSave}>
-                        <Text style={globalStyles.primaryButtonText}>Guardar Partida</Text>
-                    </TouchableOpacity>
-                </ScrollView>
             </ImageBackground>
         </SafeAreaView>
     );
