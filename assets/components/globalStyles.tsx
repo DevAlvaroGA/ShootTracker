@@ -260,82 +260,109 @@ export const globalStyles = StyleSheet.create({
         fontFamily: 'Michroma',
     },
 
-    //---------------- NEW GAME ----------------
-    containerNG: {
+    // ---------- NEW GAME ----------
+    NG_container: {
         flex: 1,
+        backgroundColor: '#000',
+        padding: 20,
     },
-    backgroundImageNG: {
-        flex: 1,
-    },
-    scrollContainer: {
-        flexGrow: 1,
-        justifyContent: 'flex-start', // empezamos un poco más abajo
-        alignItems: 'center',
-        paddingTop: '20%', // margen superior de 20% para no tapar el banner
-        paddingBottom: 20,
-        paddingHorizontal: 20,
-    },
-    title: {
-        fontSize: 26,
-        color: Colors.naranjaPrincipal,
-        marginBottom: 20,
+    NG_title: {
+        fontSize: 30,
+        color: '#FB6600',
+        marginVertical: 20,
         fontFamily: 'Michroma',
         textAlign: 'center',
     },
-    inputNG: {
-        width: '90%',
-        backgroundColor: 'transparent',
-        color: Colors.naranjaPrincipal,
-        fontSize: 16,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-        borderColor: Colors.naranjaPrincipal,
-        padding: 12,
-        marginBottom: 12,
-        fontFamily: 'Michroma',
-    },
-    primaryButton: {
-        backgroundColor: Colors.naranjaPrincipal,
-        paddingVertical: 14,
-        paddingHorizontal: 30,
-        borderRadius: 10,
-        marginTop: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    primaryButtonText: {
-        color: Colors.negro,
+    NG_input: {
+        width: '100%',
+        backgroundColor: '#1a1a1a',
+        color: '#fff',
         fontSize: 18,
-        fontWeight: '600',
-        textAlign: 'center',
+        paddingHorizontal: 15,
+        paddingVertical: 12,
+        borderRadius: 10,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#FB6600',
         fontFamily: 'Michroma',
     },
-    rowContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginVertical: 10,
+    NG_label: {
+        color: '#fff',
+        marginBottom: 5,
+        fontFamily: 'Michroma',
+        fontSize: 16,
     },
-
-    numberInputContainer: {
+    NG_pickerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
+    NG_picker: {
+        flex: 1,
+        color: '#fff',
+        backgroundColor: '#1a1a1a',
+        marginHorizontal: 2,
+        borderRadius: 10,
+    },
+    NG_dropdown: {
+        backgroundColor: '#1a1a1a',
+        borderColor: '#FB6600',
+        borderWidth: 1,
+        borderRadius: 10,
+        marginBottom: 15,
+    },
+    NG_dropdownContainer: {
+        backgroundColor: '#1a1a1a',
+        borderColor: '#FB6600',
+        borderWidth: 1,
+    },
+    NG_dropdownText: {
+        color: '#fff',
+        fontFamily: 'Michroma',
+        fontSize: 16,
+    },
+    NG_rowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    NG_numberInputContainer: {
         flex: 1,
         marginHorizontal: 5,
     },
-
-    numberInput: {
-        backgroundColor: "transparent",
-        borderColor: "#FB6600",
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        fontSize: 16,
-        color: "#FB6600",
-    },
-    label: {
-        color: Colors.gris,
-        fontSize: 14,
+    NG_smallLabel: {
+        color: '#fff',
         fontFamily: 'Michroma',
+        marginBottom: 5,
+        fontSize: 14,
     },
+    NG_numberInput: {
+        backgroundColor: '#1a1a1a',
+        color: '#fff',
+        fontSize: 16,
+        paddingHorizontal: 15,
+        paddingVertical: 12,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#FB6600',
+    },
+    primaryButton: { 
+        backgroundColor: Colors.naranjaPrincipal, 
+        paddingVertical: 14, 
+        paddingHorizontal: 30, 
+        borderRadius: 10, 
+        marginTop: 12, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+    }, 
+    primaryButtonText: { 
+        color: Colors.negro, 
+        fontSize: 18, 
+        fontWeight: '600', 
+        textAlign: 'center', 
+        fontFamily: 'Michroma', 
+    },
+
 
     //---------------- EXTRAS ----------------
     floatingButton: {
