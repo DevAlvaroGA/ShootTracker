@@ -261,19 +261,19 @@ export const globalStyles = StyleSheet.create({
     },
 
     // ---------- NEW GAME ----------
-    NG_container: {
+    NW_container: {
         flex: 1,
         backgroundColor: '#000',
         padding: 20,
     },
-    NG_title: {
+    NW_title: {
         fontSize: 30,
         color: '#FB6600',
         marginVertical: 20,
         fontFamily: 'Michroma',
         textAlign: 'center',
     },
-    NG_input: {
+    NW_input: {
         width: '100%',
         backgroundColor: '#1a1a1a',
         color: '#fff',
@@ -286,57 +286,57 @@ export const globalStyles = StyleSheet.create({
         borderColor: '#FB6600',
         fontFamily: 'Michroma',
     },
-    NG_label: {
+    NW_label: {
         color: '#fff',
         marginBottom: 5,
         fontFamily: 'Michroma',
         fontSize: 16,
     },
-    NG_pickerContainer: {
+    NW_pickerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 15,
     },
-    NG_picker: {
+    NW_picker: {
         flex: 1,
         color: '#fff',
         backgroundColor: '#1a1a1a',
         marginHorizontal: 2,
         borderRadius: 10,
     },
-    NG_dropdown: {
+    NW_dropdown: {
         backgroundColor: '#1a1a1a',
         borderColor: '#FB6600',
         borderWidth: 1,
         borderRadius: 10,
         marginBottom: 15,
     },
-    NG_dropdownContainer: {
+    NW_dropdownContainer: {
         backgroundColor: '#1a1a1a',
         borderColor: '#FB6600',
         borderWidth: 1,
     },
-    NG_dropdownText: {
+    NW_dropdownText: {
         color: '#fff',
         fontFamily: 'Michroma',
         fontSize: 16,
     },
-    NG_rowContainer: {
+    NW_rowContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 20,
     },
-    NG_numberInputContainer: {
+    NW_numberInputContainer: {
         flex: 1,
         marginHorizontal: 5,
     },
-    NG_smallLabel: {
+    NW_smallLabel: {
         color: '#fff',
         fontFamily: 'Michroma',
         marginBottom: 5,
         fontSize: 14,
     },
-    NG_numberInput: {
+    NW_numberInput: {
         backgroundColor: '#1a1a1a',
         color: '#fff',
         fontSize: 16,
@@ -346,24 +346,30 @@ export const globalStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#FB6600',
     },
-    primaryButton: { 
-        backgroundColor: Colors.naranjaPrincipal, 
-        paddingVertical: 14, 
-        paddingHorizontal: 30, 
-        borderRadius: 10, 
-        marginTop: 12, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-    }, 
-    primaryButtonText: { 
-        color: Colors.negro, 
-        fontSize: 18, 
-        fontWeight: '600', 
-        textAlign: 'center', 
-        fontFamily: 'Michroma', 
+    NW_primaryButton: {
+        backgroundColor: Colors.naranjaPrincipal,
+        paddingVertical: 14,
+        paddingHorizontal: 30,
+        borderRadius: 10,
+        marginTop: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-
-
+    NW_primaryButtonText: {
+        color: Colors.negro,
+        fontSize: 18,
+        fontWeight: '600',
+        textAlign: 'center',
+        fontFamily: 'Michroma',
+    },
+    // ERRORES (para mensajes locales o Toast)
+    NW_ER_text: {
+        color: 'red',
+        marginBottom: 10,
+        fontSize: 14,
+        fontFamily: 'Michroma',
+    },
+    
     //---------------- EXTRAS ----------------
     floatingButton: {
         position: 'absolute',

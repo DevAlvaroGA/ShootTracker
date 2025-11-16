@@ -6,12 +6,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './assets/screens/Login';
 import RegisterScreen from './assets/screens/Register';
 import Register2Screen from './assets/screens/Register2';
-import HomeScreen from './assets/screens/Home'; // nueva pantalla Home
-import NewGameScreen from './assets/screens/NewGame'; // nueva pantalla NewGame
+import HomeScreen from './assets/screens/Home';
+import NewGameScreen from './assets/screens/NewGame';
 import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import { globalStyles } from './assets/components/globalStyles';
-import * as Font from 'expo-font'; // <= importamos expo-font para las fuentes personalizadas
-import Toast from 'react-native-toast-message'; // <= importamos Toast
+import * as Font from 'expo-font';
+import Toast, { BaseToast, ToastConfig } from 'react-native-toast-message';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -24,13 +25,34 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// --- CONFIGURACIÓN GLOBAL DEL TOAST ---
+const toastConfig: ToastConfig = {
+  error: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: '#FB6600', height: 100 }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{ fontSize: 16, fontWeight: '700', color: Colors.gris, fontFamily: 'Michroma' }}
+      text2Style={{ fontSize: 14, color: Colors.gris, fontFamily: 'Michroma' }}
+    />
+  ),
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: '#00FF00', height: 100 }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{ fontSize: 16, fontWeight: '700', color: Colors.gris, fontFamily: 'Michroma' }}
+      text2Style={{ fontSize: 14, color: Colors.gris, fontFamily: 'Michroma' }}
+    />
+  ),
+};
+
 export default function App() {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadResources = async () => {
-
       // Cargar la fuente personalizada
       await Font.loadAsync({
         Michroma: require('./assets/fonts/Michroma-Regular.ttf'),
@@ -87,8 +109,8 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
 
-      {/* Toast debe ir siempre fuera de NavigationContainer */}
-      <Toast />
+      {/* Toast global */}
+      <Toast config={toastConfig} />
     </>
   );
 }

@@ -51,7 +51,7 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'Por favor, completa todos los campos.',
+        text2: 'Completa todos los campos.',
         visibilityTime: 3000,
       });
       return;
@@ -71,7 +71,7 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'Contraseña débil. Debe tener 8 caracteres, mayúscula, minúscula y un número.',
+        text2: 'Contraseña débil.',
         visibilityTime: 3000,
       });
       return;
