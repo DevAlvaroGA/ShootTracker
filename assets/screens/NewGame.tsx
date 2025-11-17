@@ -118,7 +118,7 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
         fetchData();
     }, []);
 
-    // --- Guardar la partida ---
+    // --- Guardar la partida con score ---
     const handleSave = async () => {
         const selectedDate = new Date(year, month - 1, day);
         const today = new Date();
@@ -158,6 +158,23 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 return;
             }
 
+            // --- Llamada a la API local ---
+            const response = await fetch('http://10.0.2.2:3000/calculateScore', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    kills: Number(kills),
+                    deaths: Number(deaths),
+                    result: selectedResult
+                })
+            });
+
+            if (!response.ok) throw new Error('Error al calcular el score');
+
+            const data = await response.json();
+            const score = data.score;
+
+            // --- Guardar partida en Firestore ---
             await addDoc(collection(db, "games"), {
                 userId,
                 fieldName,
@@ -167,8 +184,11 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 kills: Number(kills),
                 deaths: Number(deaths),
                 result: selectedResult,
-                matchDate: selectedDate,  // Fecha real
-                createdAt: new Date(),    // Para ordenar
+                score,
+                delete_at: null,
+                delete_mark: 'N',
+                matchDate: selectedDate,
+                createdAt: new Date(),
             });
 
             Toast.show({
