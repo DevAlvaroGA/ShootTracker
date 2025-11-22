@@ -6,6 +6,11 @@ const { width, height } = Dimensions.get('window');
 
 export const globalStyles = StyleSheet.create({
     //---------------- GENERAL ----------------
+    container: {
+        flex: 1,
+        backgroundColor: "#000",
+        fontFamily: "Michroma",
+    },
     versionText: {
         color: Colors.grisOscuro,
         fontSize: 12,
@@ -78,9 +83,6 @@ export const globalStyles = StyleSheet.create({
     },
 
     //---------------- LOGIN ----------------
-    container: {
-        flex: 1,
-    },
     backgroundImage: {
         flex: 1,
         // Eliminadas las propiedades de layout de aquí.
@@ -259,6 +261,89 @@ export const globalStyles = StyleSheet.create({
         marginTop: 4,
         fontFamily: 'Michroma',
     },
+    // ---------- HOME ----------
+    HM_header: {
+        width: "100%",
+        paddingTop: 10,
+        paddingLeft: 10,
+        position: "absolute",
+        zIndex: 20,
+    },
+
+    HM_logo: {
+        width: 150,
+        height: 150,
+    },
+
+    HM_title: {
+        color: Colors.naranjaPrincipal,
+        fontSize: 22,
+        fontFamily: "Michroma",
+        marginBottom: 15,
+        textAlign: "center",
+    },
+
+    HM_chart: {
+        borderRadius: 16,
+        marginBottom: 20,
+    },
+
+    HM_noData: {
+        color: Colors.naranjaPrincipal,
+        fontSize: 16,
+        fontFamily: "Michroma",
+        marginVertical: 30,
+        textAlign: "center",
+    },
+
+    HM_subtitle: {
+        color: Colors.naranjaPrincipal,
+        fontSize: 20,
+        fontFamily: "Michroma",
+        marginBottom: 10,
+        textAlign: "center",
+    },
+
+    HM_table: {
+        width: "100%",
+        marginBottom: 30,
+        borderWidth: 1,
+        borderRadius: 12,
+        overflow: "hidden",
+        backgroundColor: "#555",
+    },
+
+    HM_tableRow: {
+        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderBottomColor: "#555",
+        paddingVertical: 5,
+        paddingHorizontal: 3,
+    },
+
+    HM_tableHeader: {
+        backgroundColor: "#303030ff",
+    },
+
+    HM_tableCell: {
+        color: "#fff",
+        fontSize: 10,
+        fontFamily: "Michroma",
+        textAlign: "center",
+    },
+
+    HM_floatingButton: {
+        position: "absolute",
+        bottom: 25,
+        right: 25,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: Colors.naranjaPrincipal,
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 50,
+    },
 
     // ---------- NEW GAME ----------
     NW_container: {
@@ -369,7 +454,7 @@ export const globalStyles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Michroma',
     },
-    
+
     //---------------- EXTRAS ----------------
     floatingButton: {
         position: 'absolute',

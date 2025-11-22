@@ -13,7 +13,7 @@ import { globalStyles } from '../components/globalStyles';
 import Toast from 'react-native-toast-message';
 import type { RootStackParamList } from '../../App';
 
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
 import { getAuth } from "firebase/auth";
 
@@ -188,7 +188,7 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 delete_at: null,
                 delete_mark: 'N',
                 matchDate: selectedDate,
-                createdAt: new Date(),
+                createdAt: serverTimestamp(), // FIX CRÍTICO
             });
 
             Toast.show({
