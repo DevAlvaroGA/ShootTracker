@@ -162,6 +162,52 @@ export const globalStyles = StyleSheet.create({
         fontSize: 15,
         fontFamily: 'Michroma',
     },
+        LOGIN_input: {
+        height: 56,
+        backgroundColor: 'transparent',
+        marginBottom: 15,
+        borderWidth: 2,
+        borderColor: Colors.naranjaPrincipal, // O Colors.primaryOrange
+        borderRadius: 8,
+        paddingHorizontal: 20,
+        fontSize: 16,
+        color: Colors.blanco,
+        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+    },
+    // ---------------- LOGIN - NEW STYLES ----------------
+
+    LOGIN_googleButton: {
+        backgroundColor: "#ffffff",
+        height: 56,
+        borderRadius: 8,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 20,
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: "#ddd",
+    },
+
+    LOGIN_googleContent: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    LOGIN_googleIcon: {
+        width: 24,
+        height: 24,
+        marginRight: 12,
+        backgroundColor: "#fff",
+        borderRadius: 4,
+        //backgroundImage: "url('../images/google_icon.png')", // si usas ícono externo cámbialo a <Image>
+    },
+
+    LOGIN_googleText: {
+        fontSize: 16,
+        color: "#000",
+        fontFamily: "Michroma",
+    },
+
 
     //---------------- REGISTER ----------------
     REGISTER_input: {
