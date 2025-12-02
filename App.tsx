@@ -9,6 +9,9 @@ import Register2Screen from './assets/screens/Register2';
 import HomeScreen from './assets/screens/Home';
 import NewGameScreen from './assets/screens/NewGame';
 import ForgotPasswordScreen from './assets/screens/ForgotPassword';
+import ProfileScreen from './assets/screens/Profile';
+import HistoryScreen from './assets/screens/History';
+import Map from './assets/screens/Map';
 import { globalStyles } from './assets/components/globalStyles';
 import * as Font from 'expo-font';
 import Toast, { BaseToast, ToastConfig } from 'react-native-toast-message';
@@ -21,6 +24,9 @@ export type RootStackParamList = {
   Register2: { email: string; password: string; username: string };
   ForgotPassword: undefined;
   NewGame: undefined;
+  Profile: undefined;
+  History: undefined;
+  Map: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -106,8 +112,11 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           <Stack.Screen name="NewGame" component={NewGameScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="History" component={HistoryScreen} />
+          <Stack.Screen name="Map" component={Map} />
         </Stack.Navigator>
-      </NavigationContainer>
+      </NavigationContainer> 
 
       {/* Toast global */}
       <Toast config={toastConfig} />

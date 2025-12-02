@@ -158,7 +158,7 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={globalStyles.REGISTER_HaveAccountText}>
                   ¿Ya tienes cuenta?{' '}
-                  <Text style={[globalStyles.REGISTER_HaveAccountText, { fontWeight: 'bold' }]}>
+                  <Text style={[globalStyles.REGISTER_HaveAccountText, { color: '#FF8800' }]}>
                     Iniciar sesión
                   </Text>
                 </Text>

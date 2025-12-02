@@ -16,7 +16,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles';
 import {
   signInWithEmailAndPassword,
-  onAuthStateChanged,
   GoogleAuthProvider,
   signInWithCredential,
 } from "firebase/auth";
@@ -25,6 +24,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import Toast from 'react-native-toast-message';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
   Login: undefined;
@@ -50,13 +50,29 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
   });
 
   // ------------------------
-  // Recordar sesión
+  // Cargar datos guardados
   // ------------------------
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) navigation.replace("Home");
-    });
-    return unsubscribe;
+    const loadRememberedData = async () => {
+      const savedRemember = await AsyncStorage.getItem("rememberMe");
+      const savedEmail = await AsyncStorage.getItem("savedEmail");
+
+      if (savedRemember === "true") {
+        setRememberMe(true);
+
+        if (savedEmail) {
+          setEmail(savedEmail);
+        }
+
+        // Autologin SOLO si rememberMe es true
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          navigation.replace("Home");
+        }
+      }
+    };
+
+    loadRememberedData();
   }, []);
 
   // ------------------------
@@ -97,16 +113,15 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-      if (!userCredential.user.emailVerified) {
-        Toast.show({
-          type: "error",
-          text1: "Correo no verificado",
-          text2: "Valida tu correo antes de iniciar sesión.",
-        });
-        return;
+      // Guardar o borrar preferencias según rememberMe
+      if (rememberMe) {
+        await AsyncStorage.setItem("rememberMe", "true");
+        await AsyncStorage.setItem("savedEmail", email);
+      } else {
+        await AsyncStorage.removeItem("rememberMe");
+        await AsyncStorage.removeItem("savedEmail");
       }
 
-      // Aquí podrías usar rememberMe para guardar en AsyncStorage si quieres
       navigation.replace("Home");
     } catch (error: any) {
       Toast.show({
@@ -129,14 +144,25 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
 
       const credential = GoogleAuthProvider.credential(idToken);
       setLoading(true);
+
       signInWithCredential(auth, credential)
         .then(async (userCredential) => {
           await saveGoogleUser(userCredential.user);
+
+          if (rememberMe) {
+            await AsyncStorage.setItem("rememberMe", "true");
+            await AsyncStorage.setItem("savedEmail", userCredential.user.email || "");
+          } else {
+            await AsyncStorage.removeItem("rememberMe");
+            await AsyncStorage.removeItem("savedEmail");
+          }
+
           Toast.show({
             type: "success",
             text1: "Bienvenido",
             text2: "Sesión iniciada con Google",
           });
+
           navigation.replace("Home");
         })
         .catch(() => {
@@ -162,6 +188,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
           style={globalStyles.content}
         >
           <View style={globalStyles.formContainer}>
+
             {/* EMAIL */}
             <TextInput
               style={globalStyles.LOGIN_input}
@@ -184,19 +211,17 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
             />
 
             {/* RECORDAR USUARIO */}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
               <Switch
                 value={rememberMe}
                 onValueChange={setRememberMe}
                 trackColor={{ false: '#ccc', true: '#FFA500' }}
-                thumbColor={rememberMe ? '#fff' : '#fff'}
+                thumbColor="#fff"
               />
               <Text style={{ marginLeft: 6, color: '#fff', fontFamily: 'Michroma', fontSize: 15 }}>
                 Recordar
               </Text>
             </View>
-
-            {loading && <ActivityIndicator size="large" color="#FFA500" style={globalStyles.loadingContainer} />}
 
             {/* BOTÓN LOGIN */}
             <TouchableOpacity style={globalStyles.LOGIN_Button} onPress={handleLogin} disabled={loading}>
@@ -222,6 +247,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ alignItems: 'center', marginTop: 10 }}>
               <Text style={globalStyles.LOGIN_newAccountText}>Crear cuenta nueva</Text>
             </TouchableOpacity>
+
           </View>
         </KeyboardAvoidingView>
 
@@ -229,8 +255,24 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
           ShootTracker v20.3.25 [Build 1]
         </Text>
       </ImageBackground>
-
       <Toast />
+
+      {/* SPINNER DE CARGA */}
+      {loading && (
+        <View style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.93)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 999,
+        }}>
+          <ActivityIndicator size="large" color="#FFA500" />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

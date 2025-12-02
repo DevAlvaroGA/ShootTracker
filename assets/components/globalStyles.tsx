@@ -162,7 +162,7 @@ export const globalStyles = StyleSheet.create({
         fontSize: 15,
         fontFamily: 'Michroma',
     },
-        LOGIN_input: {
+    LOGIN_input: {
         height: 56,
         backgroundColor: 'transparent',
         marginBottom: 15,
@@ -390,7 +390,73 @@ export const globalStyles = StyleSheet.create({
         alignItems: "center",
         zIndex: 50,
     },
+    HM_sideMenu: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        width: 250,
+        backgroundColor: "#1b1b1b",
+        zIndex: 100,
+        paddingTop: 50,
+        paddingHorizontal: 10,
+    },
 
+    HM_menuOverlay: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        zIndex: 50,
+    },
+
+    HM_menuHeader: {
+        alignItems: "center",
+        marginBottom: 20,
+    },
+
+    HM_menuProfilePic: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        marginBottom: 10,
+    },
+
+    HM_menuUsername: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 18,
+    },
+    HM_menuContainer: {
+        position: "absolute",
+        top: 0,
+        left: -250,
+        width: 250,
+        height: "100%",
+        backgroundColor: "#1b1b1b",
+        paddingTop: 60,
+        paddingHorizontal: 20,
+        zIndex: 60,
+    },
+    HM_menuProfile: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        marginBottom: 30,
+        alignSelf: "center",
+    },
+    HM_menuItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    HM_menuText: {
+        color: "#fff",
+        fontFamily: "Michroma",
+        fontSize: 18,
+        marginLeft: 15,
+    },
     // ---------- NEW GAME ----------
     NW_container: {
         flex: 1,

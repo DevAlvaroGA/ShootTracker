@@ -11,6 +11,9 @@ import { collection, getDocs, query, where, addDoc, serverTimestamp } from "fire
 import { db } from "@/firebaseConfig";
 import { getAuth } from "firebase/auth";
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'NewGame'>) => {
 
     // --- Estados generales ---
@@ -112,6 +115,27 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
         fetchData();
     }, []);
 
+    const handleLogout = async () => {
+    try {
+        const auth = getAuth();
+        await auth.signOut();
+
+        // Limpia almacenamiento por si usas remember
+        await AsyncStorage.removeItem("rememberMe");
+        await AsyncStorage.removeItem("userEmail");
+
+        navigation.replace("Login");
+    } catch (error) {
+        console.error("Error cerrando sesión", error);
+        Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "No se pudo cerrar sesión",
+        });
+    }
+};
+
+
     // --- Guardar la partida con score ---
     const handleSave = async () => {
         const selectedDate = new Date(year, month - 1, day);
@@ -207,7 +231,25 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
 
     return (
         <SafeAreaView style={globalStyles.NW_container}>
+            {/* LOGOUT */}
+            <TouchableOpacity
+                onPress={handleLogout}
+                style={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    zIndex: 9999,
+                    paddingVertical: 50,
+                    paddingHorizontal: 12,
+                    backgroundColor: "#FFA500",
+                    borderRadius: 8,
+                }}
+            >
+                <Text style={{ color: "#000", fontWeight: "bold" }}>Salir</Text>
+            </TouchableOpacity>
             <Text style={globalStyles.NW_title}>Nueva Partida</Text>
+
+
 
             <TextInput
                 placeholder="Campo de juego"
