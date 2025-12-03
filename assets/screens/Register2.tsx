@@ -10,7 +10,6 @@ import {
     Platform,
     ImageBackground,
     ActivityIndicator,
-    StyleSheet,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Picker } from "@react-native-picker/picker";
@@ -20,15 +19,16 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import Toast from "react-native-toast-message";
 
-type RootStackParamList = {
-    Login: undefined;
-    Home: undefined;
-    Register: undefined;
-    Register2: { email: string; password: string; username: string };
-};
+import { RootStackParamList } from "../../App";  // IMPORTA EL TIPO DESDE App.tsx
 
-const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamList, "Register2">) => {
-    const { email, password, username } = route.params;
+// TIPO TIPADO CORRECTAMENTE PARA PARAMS OPCIONALES
+type Props = NativeStackScreenProps<RootStackParamList, "Register2">;
+
+const Register2 = ({ navigation, route }: Props) => {
+
+    // Si vienen params → OK
+    // Si no vienen → los inicializamos vacíos para evitar errores
+    const { email = "", password = "", username = "" } = route.params ?? {};
 
     const [name, setName] = useState("");
     const [surnames, setSurnames] = useState("");
@@ -38,23 +38,50 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
     const [loading, setLoading] = useState(false);
 
     const handleSaveData = async () => {
-        // Validación de campos vacíos
         if (!name.trim() || !surnames.trim()) {
-            Toast.show({ type: "error", text1: "Error", text2: "Completa todos los campos.", visibilityTime: 3000 });
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Completa todos los campos.",
+                visibilityTime: 3000
+            });
             return;
         }
 
         const birthDate = new Date(year, month - 1, day);
         const today = new Date();
-        const age = today.getFullYear() - birthDate.getFullYear() - (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate()) ? 1 : 0);
+        const age =
+            today.getFullYear() -
+            birthDate.getFullYear() -
+            (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate()) ? 1 : 0);
 
-        // Validación fecha coherente
         if (birthDate > today) {
-            Toast.show({ type: "error", text1: "Error", text2: "La fecha de nacimiento no puede ser futura.", visibilityTime: 3000 });
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "La fecha de nacimiento no puede ser futura.",
+                visibilityTime: 3000
+            });
             return;
         }
+
         if (age < 14) {
-            Toast.show({ type: "error", text1: "Error", text2: "Debes tener al menos 14 años para registrarte.", visibilityTime: 3000 });
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Debes tener al menos 14 años para registrarte.",
+                visibilityTime: 3000
+            });
+            return;
+        }
+
+        if (!email || !password || !username) {
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Faltan datos del registro. Vuelve a intentarlo.",
+                visibilityTime: 3000
+            });
             return;
         }
 
@@ -74,11 +101,22 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                 DELETE_MARK: "N",
             });
 
-            Toast.show({ type: "success", text1: "Registro completado", text2: "Tu cuenta y perfil se han creado correctamente.", visibilityTime: 3000 });
+            Toast.show({
+                type: "success",
+                text1: "Registro completado",
+                text2: "Tu cuenta y perfil se han creado correctamente.",
+                visibilityTime: 3000
+            });
+
             navigation.navigate("Login");
         } catch (error: any) {
             console.error("❌ Error al crear usuario/guardar datos:", error);
-            Toast.show({ type: "error", text1: "Error", text2: `No se pudieron guardar tus datos: ${error.message}`, visibilityTime: 3000 });
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: `No se pudieron guardar tus datos: ${error.message}`,
+                visibilityTime: 3000
+            });
         } finally {
             setLoading(false);
         }
@@ -86,8 +124,15 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
 
     return (
         <SafeAreaView style={globalStyles.container}>
-            <ImageBackground source={require("../images/fondo.png")} style={globalStyles.backgroundImage} resizeMode="cover">
-                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={globalStyles.content}>
+            <ImageBackground
+                source={require("../images/fondo.png")}
+                style={globalStyles.backgroundImage}
+                resizeMode="cover"
+            >
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={globalStyles.content}
+                >
                     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
                         <View style={globalStyles.REGISTER_formContainer}>
                             <Text style={globalStyles.REGISTER_titleText}>Completa tu perfil</Text>
@@ -99,6 +144,7 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                                 value={name}
                                 onChangeText={setName}
                             />
+
                             <TextInput
                                 style={globalStyles.REGISTER_input}
                                 placeholder="Apellidos"
@@ -107,7 +153,10 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
                                 onChangeText={setSurnames}
                             />
 
-                            <Text style={{ color: "#888", marginTop: 10, marginBottom: 5 }}>Fecha de nacimiento</Text>
+                            <Text style={{ color: "#888", marginTop: 10, marginBottom: 5 }}>
+                                Fecha de nacimiento
+                            </Text>
+
                             <View style={globalStyles.pickerContainer}>
                                 <View style={globalStyles.pickerWrapper}>
                                     <Picker
@@ -151,8 +200,14 @@ const Register2 = ({ navigation, route }: NativeStackScreenProps<RootStackParamL
 
                             {loading && <ActivityIndicator size="large" color="#FFA500" />}
 
-                            <TouchableOpacity style={globalStyles.REGISTER_Button} onPress={handleSaveData} disabled={loading}>
-                                <Text style={globalStyles.REGISTER_ButtonText}>Finalizar registro</Text>
+                            <TouchableOpacity
+                                style={globalStyles.REGISTER_Button}
+                                onPress={handleSaveData}
+                                disabled={loading}
+                            >
+                                <Text style={globalStyles.REGISTER_ButtonText}>
+                                    Finalizar registro
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>

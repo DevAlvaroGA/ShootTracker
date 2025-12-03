@@ -452,10 +452,43 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 20,
     },
     HM_menuText: {
-        color: "#fff",
+        color: Colors.naranjaPrincipal,
         fontFamily: "Michroma",
         fontSize: 18,
         marginLeft: 15,
+    },
+    HM_headerBar: {
+        position: "absolute",
+        top: 20,
+        left: 0,
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 20,
+        zIndex: 100,
+    },
+
+    HM_menuButton: {
+        padding: 15, // hitbox grande
+        borderRadius: 12,
+    },
+
+    HM_headerLogo: {
+        width: 140,
+        height: 140,
+    },
+    HM_headerLeft: {
+        width: 60,  // mantiene el espacio del botón SIEMPRE
+        height: 60,
+        justifyContent: "center",
+        alignItems: "flex-start",
+    },
+
+    HM_headerRight: {
+        justifyContent: "center",
+        alignItems: "flex-end",
+        flex: 1,
     },
     // ---------- NEW GAME ----------
     NW_container: {
@@ -606,6 +639,141 @@ export const globalStyles = StyleSheet.create({
     picker: {
         color: "#fff",
     },
+    // ---------- HISTORY SCREEN ----------
+    HST_container: {
+        flex: 1,
+        backgroundColor: "#000",
+        paddingTop: 30,
+        paddingHorizontal: 12,
+    },
+
+    HST_title: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 22,
+        textAlign: "center",
+        marginBottom: 15,
+    },
+
+    HST_loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    // ---------- SORTING ----------
+    HST_sortBar: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 15,
+    },
+
+    HST_pickerWrapper: {
+        backgroundColor: "#222",
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#444",
+        width: 170,
+        height: 40,
+        justifyContent: "center",
+        marginRight: 10,
+    },
+
+    HST_picker: {
+        color: "#FFA500",
+        fontSize: 14,
+        height: 70,
+        paddingLeft: 8,
+        fontFamily: "Michroma"
+    },
+
+
+    HST_sortButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+        backgroundColor: "#222",
+        borderWidth: 1,
+        borderColor: "#444",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    // ---------- CARDS ----------
+    HST_card: {
+        backgroundColor: "#111",
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: "#333",
+    },
+
+    HST_cardHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 6,
+    },
+
+    HST_cardDate: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 12,
+    },
+
+    HST_cardField: {
+        color: "#fff",
+        fontFamily: "Michroma",
+        fontSize: 12,
+        textAlign: "right",
+        flexShrink: 1,
+    },
+
+    HST_cardMode: {
+        color: "#ccc",
+        fontFamily: "Michroma",
+        fontSize: 11,
+        marginBottom: 4,
+    },
+
+    HST_cardWeapons: {
+        color: "#ccc",
+        fontFamily: "Michroma",
+        fontSize: 11,
+        marginBottom: 4,
+    },
+
+    HST_cardStats: {
+        color: "#ccc",
+        fontFamily: "Michroma",
+        fontSize: 11,
+        marginBottom: 8,
+    },
+
+    HST_highlight: {
+        color: "#FFA500",
+    },
+
+    HST_cardFooter: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+
+    HST_result: {
+        fontFamily: "Michroma",
+        fontSize: 12,
+    },
+    HST_win: { color: "#4CAF50" },
+    HST_lose: { color: "#FF5252" },
+
+    HST_points: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 12,
+    },
+
 
 
 });

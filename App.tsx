@@ -3,6 +3,7 @@ import { ImageBackground, View } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import LoginScreen from './assets/screens/Login';
 import RegisterScreen from './assets/screens/Register';
 import Register2Screen from './assets/screens/Register2';
@@ -12,16 +13,21 @@ import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import ProfileScreen from './assets/screens/Profile';
 import HistoryScreen from './assets/screens/History';
 import Map from './assets/screens/Map';
+
 import { globalStyles } from './assets/components/globalStyles';
 import * as Font from 'expo-font';
+
 import Toast, { BaseToast, ToastConfig } from 'react-native-toast-message';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
+// ----------------------------------------------------------
+// ROOT STACK TYPED (CORREGIDO)
+// ----------------------------------------------------------
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
-  Register2: { email: string; password: string; username: string };
+  Register2: { email: string; password: string; username: string } | undefined;
   ForgotPassword: undefined;
   NewGame: undefined;
   Profile: undefined;
@@ -31,7 +37,9 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// --- CONFIGURACIÓN GLOBAL DEL TOAST ---
+// ----------------------------------------------------------
+// TOAST CONFIG
+// ----------------------------------------------------------
 const toastConfig: ToastConfig = {
   error: (props) => (
     <BaseToast
@@ -53,13 +61,15 @@ const toastConfig: ToastConfig = {
   ),
 };
 
+// ----------------------------------------------------------
+// APP
+// ----------------------------------------------------------
 export default function App() {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadResources = async () => {
-      // Cargar la fuente personalizada
       await Font.loadAsync({
         Michroma: require('./assets/fonts/Michroma-Regular.ttf'),
       });
@@ -75,6 +85,7 @@ export default function App() {
         });
       }, 500);
     };
+
     loadResources();
   }, []);
 
@@ -92,6 +103,7 @@ export default function App() {
             borderColor="#FFFF"
           />
         </View>
+
         <View style={globalStyles.logoContainerSplash}>
           <ImageBackground
             source={require('./assets/images/logo.png')}
@@ -116,9 +128,8 @@ export default function App() {
           <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="Map" component={Map} />
         </Stack.Navigator>
-      </NavigationContainer> 
+      </NavigationContainer>
 
-      {/* Toast global */}
       <Toast config={toastConfig} />
     </>
   );
