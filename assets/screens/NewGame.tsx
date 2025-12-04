@@ -57,7 +57,7 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 const modes: any[] = [];
                 queryModes.forEach(doc => {
                     const data = doc.data();
-                    if (data.name && data.name.trim() !== "" && !data.master_father) {
+                    if (data.name && data.name.trim() !== "") {
                         modes.push({ label: data.name, value: data.id || data.name });
                     }
                 });
@@ -69,12 +69,13 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                     where("master_type", "==", "guns"),
                     where("value1", "==", "primaryGun")
                 );
-                const querySnapshot1 = await getDocs(q1);
-                const primary = querySnapshot1.docs
-                    .map(doc => doc.data())
-                    .filter(item => item.name && item.name.trim() !== "")
-                    .map(item => ({ label: item.name, value: item.id || item.name }));
-                setPrimaryWeapons(primary);
+                const snapshot1 = await getDocs(q1);
+                setPrimaryWeapons(
+                    snapshot1.docs.map(doc => ({
+                        label: doc.data().name,
+                        value: doc.data().id || doc.data().name
+                    }))
+                );
 
                 // --- Armas secundarias ---
                 const q2 = query(
@@ -82,12 +83,13 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                     where("master_type", "==", "guns"),
                     where("value1", "==", "secondaryGun")
                 );
-                const querySnapshot2 = await getDocs(q2);
-                const secondary = querySnapshot2.docs
-                    .map(doc => doc.data())
-                    .filter(item => item.name && item.name.trim() !== "")
-                    .map(item => ({ label: item.name, value: item.id || item.name }));
-                setSecondaryWeapons(secondary);
+                const snapshot2 = await getDocs(q2);
+                setSecondaryWeapons(
+                    snapshot2.docs.map(doc => ({
+                        label: doc.data().name,
+                        value: doc.data().id || doc.data().name
+                    }))
+                );
 
                 // --- Resultados ---
                 const qResult = query(
@@ -102,41 +104,14 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 setResults(res);
 
             } catch (error) {
-                console.error("Error al cargar datos:", error);
-                Toast.show({
-                    type: 'error',
-                    text1: 'Error',
-                    text2: 'No se pudieron cargar datos desde Firestore',
-                    visibilityTime: 3000,
-                });
+                Toast.show({ type: 'error', text1: 'Error', text2: 'No se pudieron cargar los datos.' });
             }
         };
 
         fetchData();
     }, []);
 
-    const handleLogout = async () => {
-    try {
-        const auth = getAuth();
-        await auth.signOut();
-
-        // Limpia almacenamiento por si usas remember
-        await AsyncStorage.removeItem("rememberMe");
-        await AsyncStorage.removeItem("userEmail");
-
-        navigation.replace("Login");
-    } catch (error) {
-        console.error("Error cerrando sesión", error);
-        Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: "No se pudo cerrar sesión",
-        });
-    }
-};
-
-
-    // --- Guardar la partida con score ---
+    // --- Guardar partida ---
     const handleSave = async () => {
         const selectedDate = new Date(year, month - 1, day);
         const today = new Date();
@@ -144,22 +119,12 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
         selectedDate.setHours(0, 0, 0, 0);
 
         if (selectedDate > today) {
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'La fecha no puede ser futura.',
-                visibilityTime: 3000,
-            });
+            Toast.show({ type: 'error', text1: 'Fecha incorrecta', text2: 'La fecha no puede ser futura.' });
             return;
         }
 
         if (!fieldName || !gameMode || !weapon1 || !weapon2 || !kills || !deaths || !selectedResult) {
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Completa todos los campos.',
-                visibilityTime: 3000,
-            });
+            Toast.show({ type: 'error', text1: 'Campos incompletos', text2: 'Rellena todos los campos.' });
             return;
         }
 
@@ -168,33 +133,26 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
             const userId = auth.currentUser?.uid;
 
             if (!userId) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Error',
-                    text2: 'Usuario no autenticado.',
-                });
+                Toast.show({ type: 'error', text1: 'Error', text2: 'Usuario no autenticado.' });
                 return;
             }
 
-            // --- Llamada a la API local ---
-            const response = await fetch('http://10.0.2.2:3000/calculateScore', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            // Calcular score vía API
+            const response = await fetch("http://10.0.2.2:3000/calculateScore", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     kills: Number(kills),
                     deaths: Number(deaths),
                     result: selectedResult
-                })
+                }),
             });
 
-            if (!response.ok) throw new Error('Error al calcular el score');
+            const { score } = await response.json();
 
-            const data = await response.json();
-            const score = data.score;
-
-            // --- Guardar partida en Firestore ---
+            // --- Guardar partida (CORREGIDO: uid en vez de userId) ---
             await addDoc(collection(db, "games"), {
-                userId,
+                uid: userId,
                 fieldName,
                 gameMode,
                 weapon1,
@@ -203,54 +161,25 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 deaths: Number(deaths),
                 result: selectedResult,
                 score,
+                delete_mark: "N",
                 delete_at: null,
-                delete_mark: 'N',
                 matchDate: selectedDate,
-                createdAt: serverTimestamp(), // FIX CRÍTICO
+                createdAt: serverTimestamp(),
             });
 
-            Toast.show({
-                type: 'success',
-                text1: 'Éxito',
-                text2: 'Partida guardada correctamente.',
-                visibilityTime: 3000,
-            });
-
+            Toast.show({ type: 'success', text1: 'Partida guardada' });
             navigation.goBack();
 
         } catch (error) {
-            console.error("Error al guardar partida:", error);
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'No se pudo guardar la partida.',
-                visibilityTime: 3000,
-            });
+            Toast.show({ type: 'error', text1: 'Error', text2: 'No se pudo guardar la partida.' });
         }
     };
 
     return (
         <SafeAreaView style={globalStyles.NW_container}>
-            {/* LOGOUT */}
-            <TouchableOpacity
-                onPress={handleLogout}
-                style={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    zIndex: 9999,
-                    paddingVertical: 50,
-                    paddingHorizontal: 12,
-                    backgroundColor: "#FFA500",
-                    borderRadius: 8,
-                }}
-            >
-                <Text style={{ color: "#000", fontWeight: "bold" }}>Salir</Text>
-            </TouchableOpacity>
             <Text style={globalStyles.NW_title}>Nueva Partida</Text>
 
-
-
+            {/* Campo */}
             <TextInput
                 placeholder="Campo de juego"
                 placeholderTextColor="#ccc"
@@ -259,27 +188,29 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 style={globalStyles.NW_input}
             />
 
-            {/* DATE PICKER */}
+            {/* Fecha */}
             <Text style={globalStyles.NW_label}>Fecha de la partida</Text>
             <View style={globalStyles.NW_pickerContainer}>
-                <Picker style={globalStyles.NW_picker} selectedValue={day} onValueChange={setDay}>
+                <Picker selectedValue={day} style={globalStyles.NW_picker} onValueChange={setDay}>
                     {Array.from({ length: 31 }, (_, i) => (
                         <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
                     ))}
                 </Picker>
-                <Picker style={globalStyles.NW_picker} selectedValue={month} onValueChange={setMonth}>
+
+                <Picker selectedValue={month} style={globalStyles.NW_picker} onValueChange={setMonth}>
                     {Array.from({ length: 12 }, (_, i) => (
                         <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
                     ))}
                 </Picker>
-                <Picker style={globalStyles.NW_picker} selectedValue={year} onValueChange={setYear}>
+
+                <Picker selectedValue={year} style={globalStyles.NW_picker} onValueChange={setYear}>
                     {Array.from({ length: 5 }, (_, i) => (
                         <Picker.Item key={i} label={`${2025 - i}`} value={2025 - i} />
                     ))}
                 </Picker>
             </View>
 
-            {/* GAME MODE */}
+            {/* Modo de juego */}
             <Text style={globalStyles.NW_label}>Modo de juego</Text>
             <DropDownPicker
                 open={openMode}
@@ -288,16 +219,12 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 setOpen={setOpenMode}
                 setValue={setGameMode}
                 setItems={setGameModes}
-                placeholder="Selecciona un modo de juego"
+                placeholder="Selecciona un modo"
                 style={globalStyles.NW_dropdown}
                 dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                textStyle={globalStyles.NW_dropdownText}
-                onOpen={() => { setOpenWeapon1(false); setOpenWeapon2(false); setOpenResult(false); }}
-                zIndex={4000}
-                zIndexInverse={4000}
             />
 
-            {/* PRIMARY WEAPON */}
+            {/* Arma principal */}
             <Text style={globalStyles.NW_label}>Arma principal</Text>
             <DropDownPicker
                 open={openWeapon1}
@@ -309,13 +236,9 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 placeholder="Selecciona un arma"
                 style={globalStyles.NW_dropdown}
                 dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                textStyle={globalStyles.NW_dropdownText}
-                onOpen={() => { setOpenMode(false); setOpenWeapon2(false); setOpenResult(false); }}
-                zIndex={3000}
-                zIndexInverse={1000}
             />
 
-            {/* SECONDARY WEAPON */}
+            {/* Arma secundaria */}
             <Text style={globalStyles.NW_label}>Arma secundaria</Text>
             <DropDownPicker
                 open={openWeapon2}
@@ -327,13 +250,9 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 placeholder="Selecciona un arma"
                 style={globalStyles.NW_dropdown}
                 dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                textStyle={globalStyles.NW_dropdownText}
-                onOpen={() => { setOpenMode(false); setOpenWeapon1(false); setOpenResult(false); }}
-                zIndex={2000}
-                zIndexInverse={2000}
             />
 
-            {/* KILLS & DEATHS */}
+            {/* Kills y Deaths */}
             <View style={globalStyles.NW_rowContainer}>
                 <View style={globalStyles.NW_numberInputContainer}>
                     <Text style={globalStyles.NW_smallLabel}>Kills</Text>
@@ -360,7 +279,7 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 </View>
             </View>
 
-            {/* RESULTADO */}
+            {/* Resultado */}
             <Text style={globalStyles.NW_label}>Resultado</Text>
             <DropDownPicker
                 open={openResult}
@@ -372,15 +291,13 @@ const NewGame = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'New
                 placeholder="Selecciona un resultado"
                 style={globalStyles.NW_dropdown}
                 dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                textStyle={globalStyles.NW_dropdownText}
-                onOpen={() => { setOpenMode(false); setOpenWeapon1(false); setOpenWeapon2(false); }}
-                zIndex={1000}
-                zIndexInverse={1000}
             />
 
+            {/* Botón Guardar */}
             <TouchableOpacity style={globalStyles.NW_primaryButton} onPress={handleSave}>
                 <Text style={globalStyles.NW_primaryButtonText}>Guardar Partida</Text>
             </TouchableOpacity>
+
         </SafeAreaView>
     );
 };

@@ -150,6 +150,13 @@ const HomeScreen = ({
           source={require("../images/default_profile.png")}
           style={globalStyles.HM_menuProfile}
         />
+        <TouchableOpacity
+          style={globalStyles.HM_menuItem}
+          onPress={() => navigateTo("Profile")}
+        >
+          <Ionicons name="person-outline" size={24} color="#ff8800" />
+          <Text style={globalStyles.HM_menuText}>Perfil</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={globalStyles.HM_menuItem}
@@ -159,13 +166,6 @@ const HomeScreen = ({
           <Text style={globalStyles.HM_menuText}>Historial</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={globalStyles.HM_menuItem}
-          onPress={() => navigateTo("Profile")}
-        >
-          <Ionicons name="person-outline" size={24} color="#ff8800" />
-          <Text style={globalStyles.HM_menuText}>Perfil</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity
           style={globalStyles.HM_menuItem}

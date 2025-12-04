@@ -438,6 +438,7 @@ export const globalStyles = StyleSheet.create({
         paddingTop: 60,
         paddingHorizontal: 20,
         zIndex: 60,
+        borderBottomEndRadius: 20,
     },
     HM_menuProfile: {
         width: 80,
@@ -592,6 +593,26 @@ export const globalStyles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Michroma',
     },
+    NW_logoutText: {
+        color: "#000",
+        fontFamily: "Michroma",
+        fontSize: 14,
+        fontWeight: "bold",
+    },
+    NW_logoutButton: {
+    position: "absolute",
+    top: 15,
+    right: 15,
+    backgroundColor: "#FFA500",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    zIndex: 999,
+    flexDirection: "row",
+    alignItems: "center",
+},
+
+
     // ERRORES (para mensajes locales o Toast)
     NW_ER_text: {
         color: 'red',
@@ -773,7 +794,168 @@ export const globalStyles = StyleSheet.create({
         fontFamily: "Michroma",
         fontSize: 12,
     },
+    // ---------- PROFILE SCREEN ----------
 
+    PRF_container: {
+        flex: 1,
+        backgroundColor: "#000",
+        paddingHorizontal: 20,
+    },
+
+    PRF_loading: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#000",
+    },
+
+    PRF_centered: {
+        alignItems: "center",
+        marginTop: 20,
+    },
+
+    PRF_profileImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        marginBottom: 10,
+    },
+
+    PRF_username: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 22,
+        marginBottom: 10,
+    },
+
+    PRF_editButton: {
+        backgroundColor: "#FFA500",
+        paddingHorizontal: 20,
+        paddingVertical: 8,
+        borderRadius: 10,
+        marginTop: 5,
+    },
+
+    PRF_editButtonText: {
+        fontFamily: "Michroma",
+        color: "#000",
+        fontSize: 14,
+    },
+
+    // ---------- INFO CARD ----------
+
+    PRF_infoCard: {
+        backgroundColor: "#111",
+        borderRadius: 12,
+        padding: 15,
+        marginTop: 20,
+        borderWidth: 1,
+        borderColor: "#333",
+    },
+
+    PRF_infoLabel: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 14,
+        marginTop: 12,
+    },
+
+    PRF_infoValue: {
+        color: "#fff",
+        fontFamily: "Michroma",
+        fontSize: 13,
+        marginTop: 4,
+    },
+
+    PRF_bioInput: {
+        backgroundColor: "#222",
+        color: "#fff",
+        padding: 10,
+        borderRadius: 8,
+        marginTop: 5,
+        minHeight: 70,
+        textAlignVertical: "top",
+        fontFamily: "Michroma",
+    },
+
+    // PICKERS
+    PRF_pickerWrapper: {
+        backgroundColor: "#222",
+        borderWidth: 1,
+        borderColor: "#444",
+        borderRadius: 8,
+        marginTop: 5,
+    },
+
+    PRF_picker: {
+        color: "#FFA500",
+        height: 40,
+        paddingLeft: 5,
+    },
+
+    // ---------- STATS CARD ----------
+    PRF_statsCard: {
+        backgroundColor: "#111",
+        borderRadius: 12,
+        padding: 15,
+        marginTop: 20,
+        borderWidth: 1,
+        borderColor: "#333",
+    },
+
+    PRF_statsText: {
+        color: "#fff",
+        fontFamily: "Michroma",
+        fontSize: 14,
+        marginBottom: 8,
+    },
+
+    // ---------- SAVE / CANCEL ----------
+    PRF_buttonsRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 25,
+        marginBottom: 30,
+    },
+
+    PRF_saveButton: {
+        flex: 1,
+        backgroundColor: "#FFA500",
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginRight: 10,
+        alignItems: "center",
+    },
+    PRF_saveButtonText: {
+        fontFamily: "Michroma",
+        fontSize: 15,
+        color: "#000",
+    },
+
+    PRF_cancelButton: {
+        flex: 1,
+        backgroundColor: "#333",
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginLeft: 10,
+        alignItems: "center",
+    },
+    PRF_cancelButtonText: {
+        fontFamily: "Michroma",
+        fontSize: 15,
+        color: "#fff",
+    },
+    PRF_usernameInput: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 22,
+        borderBottomWidth: 1,
+        borderColor: "#FFA500",
+        paddingVertical: 4,
+        width: 200,
+        textAlign: "center",
+        marginBottom: 10,
+    },
 
 
 });
