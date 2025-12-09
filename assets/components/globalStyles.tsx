@@ -600,17 +600,17 @@ export const globalStyles = StyleSheet.create({
         fontWeight: "bold",
     },
     NW_logoutButton: {
-    position: "absolute",
-    top: 15,
-    right: 15,
-    backgroundColor: "#FFA500",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    zIndex: 999,
-    flexDirection: "row",
-    alignItems: "center",
-},
+        position: "absolute",
+        top: 15,
+        right: 15,
+        backgroundColor: "#FFA500",
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 8,
+        zIndex: 999,
+        flexDirection: "row",
+        alignItems: "center",
+    },
 
 
     // ERRORES (para mensajes locales o Toast)
@@ -955,6 +955,62 @@ export const globalStyles = StyleSheet.create({
         width: 200,
         textAlign: "center",
         marginBottom: 10,
+    },
+    // ---------------- VERIFY EMAIL SCREEN ----------------
+    verify_container: {
+        flex: 1,
+        backgroundColor: "#000",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
+    },
+
+    verify_title: {
+        color: "#FFA500",
+        fontSize: 26,
+        fontFamily: "Michroma",
+        marginBottom: 20,
+        textAlign: "center",
+    },
+
+    verify_text: {
+        color: "#ccc",
+        fontSize: 14,
+        fontFamily: "Michroma",
+        textAlign: "center",
+        marginTop: 10,
+    },
+
+    verify_email: {
+        color: "#fff",
+        fontSize: 18,
+        fontFamily: "Michroma",
+        marginVertical: 15,
+    },
+
+    verify_button: {
+        marginTop: 30,
+        backgroundColor: "#FFA500",
+        paddingVertical: 14,
+        paddingHorizontal: 25,
+        borderRadius: 10,
+    },
+
+    verify_buttonText: {
+        color: "#000",
+        fontWeight: "bold",
+        fontSize: 16,
+        fontFamily: "Michroma",
+    },
+
+    verify_backButton: {
+        marginTop: 25,
+    },
+
+    verify_backText: {
+        color: "#FFA500",
+        fontSize: 14,
+        fontFamily: "Michroma",
     },
 
 

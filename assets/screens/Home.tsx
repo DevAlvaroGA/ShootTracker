@@ -25,6 +25,9 @@ import {
 import { LineChart } from "react-native-chart-kit";
 import type { RootStackParamList } from "../../App";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BackHandler } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+
 
 type Match = {
   id: string;
@@ -46,6 +49,29 @@ const HomeScreen = ({
   // ----------------- MENÚ LATERAL -----------------
   const [menuOpen, setMenuOpen] = useState(false);
   const slideAnim = useState(new Animated.Value(-250))[0]; // ancho menú 250
+
+  // BLOQUEAR ATRÁS EN ANDROID
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        return true; // BLOQUEA el botón atrás
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [])
+  );
+
+  useEffect(() => {
+    const unsub = auth.onAuthStateChanged((user) => {
+      if (!user) navigation.replace("Login");
+    });
+
+    return unsub;
+  }, []);
+
 
   const toggleMenu = () => {
     if (menuOpen) {

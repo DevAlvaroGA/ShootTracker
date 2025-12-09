@@ -11,23 +11,20 @@ import {
     ImageBackground,
     ActivityIndicator,
 } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Picker } from "@react-native-picker/picker";
 import { globalStyles } from "../components/globalStyles";
 import { db, auth } from "@/firebaseConfig";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import Toast from "react-native-toast-message";
 
-import { RootStackParamList } from "../../App";  // IMPORTA EL TIPO DESDE App.tsx
+import type { RootStackParamList } from "../../App";
 
-// TIPO TIPADO CORRECTAMENTE PARA PARAMS OPCIONALES
 type Props = NativeStackScreenProps<RootStackParamList, "Register2">;
 
-const Register2 = ({ navigation, route }: Props) => {
-
-    // Si vienen params → OK
-    // Si no vienen → los inicializamos vacíos para evitar errores
+export default function Register2({ navigation, route }: Props) {
     const { email = "", password = "", username = "" } = route.params ?? {};
 
     const [name, setName] = useState("");
@@ -43,44 +40,25 @@ const Register2 = ({ navigation, route }: Props) => {
                 type: "error",
                 text1: "Error",
                 text2: "Completa todos los campos.",
-                visibilityTime: 3000
             });
             return;
         }
 
         const birthDate = new Date(year, month - 1, day);
         const today = new Date();
+
         const age =
             today.getFullYear() -
             birthDate.getFullYear() -
-            (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate()) ? 1 : 0);
-
-        if (birthDate > today) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "La fecha de nacimiento no puede ser futura.",
-                visibilityTime: 3000
-            });
-            return;
-        }
+            (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate())
+                ? 1
+                : 0);
 
         if (age < 14) {
             Toast.show({
                 type: "error",
-                text1: "Error",
+                text1: "Edad no válida",
                 text2: "Debes tener al menos 14 años para registrarte.",
-                visibilityTime: 3000
-            });
-            return;
-        }
-
-        if (!email || !password || !username) {
-            Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Faltan datos del registro. Vuelve a intentarlo.",
-                visibilityTime: 3000
             });
             return;
         }
@@ -88,8 +66,8 @@ const Register2 = ({ navigation, route }: Props) => {
         setLoading(true);
 
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const uid = userCredential.user.uid;
+            const userCred = await createUserWithEmailAndPassword(auth, email, password);
+            const uid = userCred.user.uid;
 
             await setDoc(doc(db, "users", uid), {
                 NAME: name,
@@ -101,21 +79,24 @@ const Register2 = ({ navigation, route }: Props) => {
                 DELETE_MARK: "N",
             });
 
+            // ENVÍA VERIFICACIÓN
+            await sendEmailVerification(userCred.user);
+
             Toast.show({
                 type: "success",
-                text1: "Registro completado",
-                text2: "Tu cuenta y perfil se han creado correctamente.",
-                visibilityTime: 3000
+                text1: "Cuenta creada",
+                text2: "Revisa tu correo para verificar tu cuenta.",
             });
 
-            navigation.navigate("Login");
+            setTimeout(() => {
+                navigation.replace("VerifyEmail", { email });
+            }, 400);
+
         } catch (error: any) {
-            console.error("❌ Error al crear usuario/guardar datos:", error);
             Toast.show({
                 type: "error",
                 text1: "Error",
-                text2: `No se pudieron guardar tus datos: ${error.message}`,
-                visibilityTime: 3000
+                text2: error.message,
             });
         } finally {
             setLoading(false);
@@ -127,7 +108,6 @@ const Register2 = ({ navigation, route }: Props) => {
             <ImageBackground
                 source={require("../images/fondo.png")}
                 style={globalStyles.backgroundImage}
-                resizeMode="cover"
             >
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -157,7 +137,9 @@ const Register2 = ({ navigation, route }: Props) => {
                                 Fecha de nacimiento
                             </Text>
 
+                            {/* PICKER ARREGLADO COMO LO TENÍAS ANTES */}
                             <View style={globalStyles.pickerContainer}>
+                                
                                 <View style={globalStyles.pickerWrapper}>
                                     <Picker
                                         style={globalStyles.picker}
@@ -192,10 +174,15 @@ const Register2 = ({ navigation, route }: Props) => {
                                         onValueChange={setYear}
                                     >
                                         {Array.from({ length: 100 }, (_, i) => (
-                                            <Picker.Item key={i} label={`${2025 - i}`} value={2025 - i} />
+                                            <Picker.Item
+                                                key={i}
+                                                label={`${2025 - i}`}
+                                                value={2025 - i}
+                                            />
                                         ))}
                                     </Picker>
                                 </View>
+
                             </View>
 
                             {loading && <ActivityIndicator size="large" color="#FFA500" />}
@@ -215,6 +202,4 @@ const Register2 = ({ navigation, route }: Props) => {
             </ImageBackground>
         </SafeAreaView>
     );
-};
-
-export default Register2;
+}

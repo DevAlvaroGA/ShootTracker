@@ -13,6 +13,7 @@ import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import ProfileScreen from './assets/screens/Profile';
 import HistoryScreen from './assets/screens/History';
 import Map from './assets/screens/Map';
+import VerifyEmailScreen from './assets/screens/VerifyEmailScreen';
 
 import { globalStyles } from './assets/components/globalStyles';
 import * as Font from 'expo-font';
@@ -21,7 +22,7 @@ import Toast, { BaseToast, ToastConfig } from 'react-native-toast-message';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 // ----------------------------------------------------------
-// ROOT STACK TYPED (CORREGIDO)
+// ROOT STACK TYPED
 // ----------------------------------------------------------
 export type RootStackParamList = {
   Login: undefined;
@@ -33,6 +34,7 @@ export type RootStackParamList = {
   Profile: undefined;
   History: undefined;
   Map: undefined;
+  VerifyEmail: { email: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -89,33 +91,43 @@ export default function App() {
     loadResources();
   }, []);
 
+  // ----------------------------------------------------------
+  // SPLASH SCREEN + TOAST (CORREGIDO)
+  // ----------------------------------------------------------
   if (isLoading) {
     return (
-      <ImageBackground
-        source={require('./assets/images/Airsoft_BW.png')}
-        style={globalStyles.backgroundSplash}
-      >
-        <View style={globalStyles.loadingContainerSplash}>
-          <Progress.Bar
-            progress={progress}
-            width={340}
-            color="#FB6600"
-            borderColor="#FFFF"
-          />
-        </View>
+      <View style={{ flex: 1 }}>
+        <ImageBackground
+          source={require('./assets/images/Airsoft_BW.png')}
+          style={globalStyles.backgroundSplash}
+        >
+          <View style={globalStyles.loadingContainerSplash}>
+            <Progress.Bar
+              progress={progress}
+              width={340}
+              color="#FB6600"
+              borderColor="#FFFF"
+            />
+          </View>
 
-        <View style={globalStyles.logoContainerSplash}>
-          <ImageBackground
-            source={require('./assets/images/logo.png')}
-            style={globalStyles.logoSplash}
-          />
-        </View>
-      </ImageBackground>
+          <View style={globalStyles.logoContainerSplash}>
+            <ImageBackground
+              source={require('./assets/images/logo.png')}
+              style={globalStyles.logoSplash}
+            />
+          </View>
+        </ImageBackground>
+
+        <Toast config={toastConfig} />
+      </View>
     );
   }
 
+  // ----------------------------------------------------------
+  // APP PRINCIPAL + TOAST (CORREGIDO)
+  // ----------------------------------------------------------
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -127,10 +139,12 @@ export default function App() {
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="Map" component={Map} />
+          <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
         </Stack.Navigator>
       </NavigationContainer>
 
+      {/* Toast ahora SIEMPRE encima del Navigator */}
       <Toast config={toastConfig} />
-    </>
+    </View>
   );
 }
