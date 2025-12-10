@@ -13,14 +13,21 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "ShootTracker necesita acceder a tu ubicación para mostrar campos cercanos en el mapa."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.alvinotintx.ShootTracker_cod"
+      "package": "com.alvinotintx.ShootTracker_cod",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,7 +39,13 @@
     },
     "owner": "alvinotintx",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-maps",
+        {
+          "googleMapsApiKey": "AIzaSyBkE2C9CLmRQGyTmspcb983FDTfMihiOew"
+        }
+      ]
     ]
   }
 }

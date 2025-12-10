@@ -1,46 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+    View, Text, TouchableOpacity, ActivityIndicator
+} from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { getAuth, sendEmailVerification } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import { globalStyles } from "../components/globalStyles";
+
 import type { RootStackParamList } from "../../App";
 
 type Props = NativeStackScreenProps<RootStackParamList, "VerifyEmail">;
 
 export default function VerifyEmailScreen({ navigation, route }: Props) {
+
     const { email } = route.params;
     const auth = getAuth();
 
     const [loading, setLoading] = useState(false);
     const [timer, setTimer] = useState(20);
-    const [isVerified, setIsVerified] = useState(false);
 
     // -------------------------------------------
-    // TEMPORIZADOR DE 20 SEG
+    // TEMPORIZADOR
     // -------------------------------------------
     useEffect(() => {
-        if (timer === 0) return;
-        const interval = setInterval(() => setTimer((t) => t - 1), 1000);
+        if (timer <= 0) return;
+
+        const interval = setInterval(() => {
+            setTimer((t) => t - 1);
+        }, 1000);
+
         return () => clearInterval(interval);
     }, [timer]);
 
     // -------------------------------------------
-    // AUTO-CHECK CADA 3 SEGUNDOS
+    // AUTO-CHECK DE VERIFICACIÓN
     // -------------------------------------------
     useEffect(() => {
         const interval = setInterval(async () => {
-            await auth.currentUser?.reload();
-            if (auth.currentUser?.emailVerified) {
-                setIsVerified(true);
-                clearInterval(interval);
+            if (!auth.currentUser) return;
 
+            await auth.currentUser.reload();
+
+            if (auth.currentUser.emailVerified) {
                 Toast.show({
                     type: "success",
                     text1: "Correo verificado",
-                    text2: "Ya puedes usar tu cuenta.",
+                    text2: "Ya puedes iniciar sesión.",
                 });
 
+                clearInterval(interval);
                 navigation.replace("Login");
             }
         }, 3000);
@@ -48,6 +57,9 @@ export default function VerifyEmailScreen({ navigation, route }: Props) {
         return () => clearInterval(interval);
     }, []);
 
+    // -------------------------------------------
+    // REENVIAR EMAIL
+    // -------------------------------------------
     const resendEmail = async () => {
         if (!auth.currentUser) return;
 
@@ -61,6 +73,7 @@ export default function VerifyEmailScreen({ navigation, route }: Props) {
                 text1: "Correo reenviado",
                 text2: "Revisa tu bandeja de entrada.",
             });
+
         } catch (error) {
             Toast.show({
                 type: "error",
@@ -68,6 +81,7 @@ export default function VerifyEmailScreen({ navigation, route }: Props) {
                 text2: "No se pudo reenviar el correo.",
             });
         }
+
         setLoading(false);
     };
 

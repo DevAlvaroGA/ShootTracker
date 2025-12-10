@@ -1,3 +1,4 @@
+// App.tsx
 import React, { useState, useEffect } from 'react';
 import { ImageBackground, View } from 'react-native';
 import * as Progress from 'react-native-progress';
@@ -21,16 +22,14 @@ import * as Font from 'expo-font';
 import Toast, { BaseToast, ToastConfig } from 'react-native-toast-message';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-// ----------------------------------------------------------
-// ROOT STACK TYPED
-// ----------------------------------------------------------
+
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Register: undefined;
   Register2: { email: string; password: string; username: string } | undefined;
   ForgotPassword: undefined;
-  NewGame: undefined;
+  NewGame: { fieldName?: string } | undefined;
   Profile: undefined;
   History: undefined;
   Map: undefined;
@@ -39,33 +38,27 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// ----------------------------------------------------------
-// TOAST CONFIG
-// ----------------------------------------------------------
 const toastConfig: ToastConfig = {
   error: (props) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: '#FB6600', height: 100 }}
+      style={{ borderLeftColor: '#FB6600', height: 80 }}
       contentContainerStyle={{ paddingHorizontal: 15 }}
-      text1Style={{ fontSize: 16, fontWeight: '700', color: Colors.gris, fontFamily: 'Michroma' }}
-      text2Style={{ fontSize: 14, color: Colors.gris, fontFamily: 'Michroma' }}
+      text1Style={{ fontSize: 16, fontWeight: '700', color: '#fff', fontFamily: 'Michroma' }}
+      text2Style={{ fontSize: 14, color: '#fff', fontFamily: 'Michroma' }}
     />
   ),
   success: (props) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: '#00FF00', height: 100 }}
+      style={{ borderLeftColor: '#00FF00', height: 80 }}
       contentContainerStyle={{ paddingHorizontal: 15 }}
-      text1Style={{ fontSize: 16, fontWeight: '700', color: Colors.gris, fontFamily: 'Michroma' }}
-      text2Style={{ fontSize: 14, color: Colors.gris, fontFamily: 'Michroma' }}
+      text1Style={{ fontSize: 16, fontWeight: '700', color: '#fff', fontFamily: 'Michroma' }}
+      text2Style={{ fontSize: 14, color: '#fff', fontFamily: 'Michroma' }}
     />
   ),
 };
 
-// ----------------------------------------------------------
-// APP
-// ----------------------------------------------------------
 export default function App() {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,58 +69,47 @@ export default function App() {
         Michroma: require('./assets/fonts/Michroma-Regular.ttf'),
       });
 
-      let progressInterval = setInterval(() => {
-        setProgress((prevProgress) => {
-          if (prevProgress >= 1) {
-            clearInterval(progressInterval);
-            setIsLoading(false);
-            return 1;
-          }
-          return prevProgress + 0.1;
-        });
-      }, 500);
+      let i = 0;
+      const interval = setInterval(() => {
+        i += 0.1;
+        setProgress((prev) => Math.min(1, prev + 0.1));
+        if (i >= 1) {
+          clearInterval(interval);
+          setIsLoading(false);
+        }
+      }, 100);
     };
 
     loadResources();
   }, []);
 
-  // ----------------------------------------------------------
-  // SPLASH SCREEN + TOAST (CORREGIDO)
-  // ----------------------------------------------------------
   if (isLoading) {
     return (
-      <View style={{ flex: 1 }}>
-        <ImageBackground
-          source={require('./assets/images/Airsoft_BW.png')}
-          style={globalStyles.backgroundSplash}
-        >
-          <View style={globalStyles.loadingContainerSplash}>
-            <Progress.Bar
-              progress={progress}
-              width={340}
-              color="#FB6600"
-              borderColor="#FFFF"
-            />
-          </View>
+      <ImageBackground
+        source={require('./assets/images/Airsoft_BW.png')}
+        style={globalStyles.backgroundSplash}
+      >
+        <View style={globalStyles.loadingContainerSplash}>
+          <Progress.Bar
+            progress={progress}
+            width={340}
+            color="#FB6600"
+            borderColor="#FFFF"
+          />
+        </View>
 
-          <View style={globalStyles.logoContainerSplash}>
-            <ImageBackground
-              source={require('./assets/images/logo.png')}
-              style={globalStyles.logoSplash}
-            />
-          </View>
-        </ImageBackground>
-
-        <Toast config={toastConfig} />
-      </View>
+        <View style={globalStyles.logoContainerSplash}>
+          <ImageBackground
+            source={require('./assets/images/logo.png')}
+            style={globalStyles.logoSplash}
+          />
+        </View>
+      </ImageBackground>
     );
   }
 
-  // ----------------------------------------------------------
-  // APP PRINCIPAL + TOAST (CORREGIDO)
-  // ----------------------------------------------------------
   return (
-    <View style={{ flex: 1 }}>
+    <>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -143,8 +125,8 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
 
-      {/* Toast ahora SIEMPRE encima del Navigator */}
+      {/* Toast global */}
       <Toast config={toastConfig} />
-    </View>
+    </>
   );
 }

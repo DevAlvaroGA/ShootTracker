@@ -9,54 +9,58 @@ import {
   Dimensions,
   Animated,
 } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { globalStyles } from "../components/globalStyles";
 import { auth, db } from "@/firebaseConfig";
 import { signOut } from "firebase/auth";
+
 import {
   collection,
   query,
+  where,
   orderBy,
   limit,
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
+
 import { LineChart } from "react-native-chart-kit";
-import type { RootStackParamList } from "../../App";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+
+import type { RootStackParamList } from "../../App";
 
 
 type Match = {
   id: string;
   kills: number;
   deaths: number;
-  weapon1: number;
-  weapon2: number;
+  weapon1: string | number;
+  weapon2: string | number;
   fieldName: string;
   score: number;
   result: string;
   createdAt: Timestamp;
 };
 
+
 const HomeScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, "Home">) => {
+
   const [lastMatches, setLastMatches] = useState<Match[]>([]);
 
-  // ----------------- MENÚ LATERAL -----------------
+  // ----------------- MENÚ -----------------
   const [menuOpen, setMenuOpen] = useState(false);
   const slideAnim = useState(new Animated.Value(-250))[0]; // ancho menú 250
 
-  // BLOQUEAR ATRÁS EN ANDROID
+  // BLOQUEAR BOTÓN ATRÁS EN ANDROID
   useFocusEffect(
     React.useCallback(() => {
-      const onBackPress = () => {
-        return true; // BLOQUEA el botón atrás
-      };
-
+      const onBackPress = () => true; // bloquea el botón atrás
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
       return () =>
@@ -64,6 +68,7 @@ const HomeScreen = ({
     }, [])
   );
 
+  // Mantener sesión
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
       if (!user) navigation.replace("Login");
@@ -72,7 +77,7 @@ const HomeScreen = ({
     return unsub;
   }, []);
 
-
+  // ----------------- MENÚ ANIMADO -----------------
   const toggleMenu = () => {
     if (menuOpen) {
       Animated.timing(slideAnim, {
@@ -90,7 +95,6 @@ const HomeScreen = ({
     }
   };
 
-  // ----------------- NAVEGACIÓN TIPADA -----------------
   const navigateTo = (screen: keyof RootStackParamList) => {
     toggleMenu();
     navigation.navigate(screen as any);
@@ -111,8 +115,13 @@ const HomeScreen = ({
 
   // ----------------- FIRESTORE: ÚLTIMAS PARTIDAS -----------------
   useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
     const q = query(
       collection(db, "games"),
+      where("uid", "==", uid),
+      where("delete_mark", "==", "N"),
       orderBy("createdAt", "desc"),
       limit(5)
     );
@@ -123,6 +132,7 @@ const HomeScreen = ({
         ...doc.data(),
       })) as Match[];
 
+      // Reverse = para mostrar cronológicamente (más antiguo → más nuevo)
       setLastMatches(data.reverse());
     });
 
@@ -132,6 +142,7 @@ const HomeScreen = ({
   const screenWidth = Dimensions.get("window").width - 20;
   const chartLabels = lastMatches.map((_, i) => `Partida ${i + 1}`);
 
+
   return (
     <SafeAreaView
       style={[
@@ -139,18 +150,20 @@ const HomeScreen = ({
         { backgroundColor: "#000", paddingTop: 120, paddingHorizontal: 10 },
       ]}
     >
-      {/* ---------------- HEADER SUPERIOR ---------------- */}
+
+      {/* HEADER */}
       <View style={globalStyles.HM_headerBar}>
-        {/* COLUMNA IZQUIERDA FIJA */}
         <View style={globalStyles.HM_headerLeft}>
           {!menuOpen && (
-            <TouchableOpacity style={globalStyles.HM_menuButton} onPress={toggleMenu}>
+            <TouchableOpacity
+              style={globalStyles.HM_menuButton}
+              onPress={toggleMenu}
+            >
               <Ionicons name="menu" size={32} color="#FF8800" />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* LOGO A LA DERECHA */}
         <View style={globalStyles.HM_headerRight}>
           <Image
             source={require("../images/logo.png")}
@@ -160,7 +173,7 @@ const HomeScreen = ({
         </View>
       </View>
 
-      {/* OVERLAY PARA CERRAR MENÚ */}
+      {/* OVERLAY - Cierra menú */}
       {menuOpen && (
         <TouchableOpacity
           style={globalStyles.HM_menuOverlay}
@@ -168,7 +181,7 @@ const HomeScreen = ({
         />
       )}
 
-      {/* MENÚ LATERAL DESLIZABLE */}
+      {/* MENÚ LATERAL */}
       <Animated.View
         style={[globalStyles.HM_menuContainer, { left: slideAnim }]}
       >
@@ -176,6 +189,7 @@ const HomeScreen = ({
           source={require("../images/default_profile.png")}
           style={globalStyles.HM_menuProfile}
         />
+
         <TouchableOpacity
           style={globalStyles.HM_menuItem}
           onPress={() => navigateTo("Profile")}
@@ -192,7 +206,6 @@ const HomeScreen = ({
           <Text style={globalStyles.HM_menuText}>Historial</Text>
         </TouchableOpacity>
 
-
         <TouchableOpacity
           style={globalStyles.HM_menuItem}
           onPress={() => navigateTo("Map")}
@@ -201,16 +214,19 @@ const HomeScreen = ({
           <Text style={globalStyles.HM_menuText}>Mapa</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={globalStyles.HM_menuItem} onPress={handleLogout}>
+        <TouchableOpacity
+          style={globalStyles.HM_menuItem}
+          onPress={handleLogout}
+        >
           <Ionicons name="log-out-outline" size={24} color="#ff8800" />
           <Text style={globalStyles.HM_menuText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </Animated.View>
 
-      {/* TÍTULO */}
+
+      {/* ESTADÍSTICAS */}
       <Text style={globalStyles.HM_title}>Estadísticas Recientes</Text>
 
-      {/* GRÁFICO */}
       {lastMatches.length > 0 ? (
         <LineChart
           data={{
@@ -265,9 +281,15 @@ const HomeScreen = ({
           <View style={[globalStyles.HM_tableRow, globalStyles.HM_tableHeader]}>
             <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Partida</Text>
             <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Campo</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Arma 1</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Arma 2</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Resultado</Text>
+            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+              Arma 1
+            </Text>
+            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+              Arma 2
+            </Text>
+            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+              Resultado
+            </Text>
             <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Puntos</Text>
           </View>
 
@@ -276,12 +298,24 @@ const HomeScreen = ({
               key={m.id}
               style={[globalStyles.HM_tableRow, { backgroundColor: "#1b1b1bff" }]}
             >
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>{index + 1}</Text>
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>{m.fieldName}</Text>
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>{m.weapon1}</Text>
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>{m.weapon2}</Text>
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>{m.result}</Text>
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>{m.score}</Text>
+              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+                {index + 1}
+              </Text>
+              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+                {m.fieldName}
+              </Text>
+              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+                {m.weapon1}
+              </Text>
+              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+                {m.weapon2}
+              </Text>
+              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+                {m.result}
+              </Text>
+              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
+                {m.score}
+              </Text>
             </View>
           ))}
         </View>

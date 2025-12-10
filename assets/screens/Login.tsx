@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,20 +11,25 @@ import {
   Platform,
   Image,
   Switch,
-} from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { globalStyles } from '../components/globalStyles';
+} from "react-native";
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { globalStyles } from "../components/globalStyles";
+
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithCredential,
 } from "firebase/auth";
+
 import { auth, db } from "@/firebaseConfig";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import Toast from 'react-native-toast-message';
-import * as WebBrowser from 'expo-web-browser';
+
+import Toast from "react-native-toast-message";
+import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type RootStackParamList = {
   Login: undefined;
@@ -35,23 +40,25 @@ type RootStackParamList = {
 
 WebBrowser.maybeCompleteAuthSession();
 
-const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Login'>) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginScreen = ({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, "Login">) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  // ------------------------
-  // GOOGLE AUTH HOOK
-  // ------------------------
+  // -------------------------------------------------------------
+  // GOOGLE AUTH (CONFIGURACIÓN 2025 — SOLO clientId)
+  // -------------------------------------------------------------
   const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: "610622971890-jubbc2m1tjpaitqbrh20dja71e1hj4ld.apps.googleusercontent.com",
-    redirectUri: "https://auth.expo.io/@alvinotintx/ShootTracker_cod",
+    clientId:
+      "610622971890-jubbc2m1tjpaitqbrh20dja71e1hj4ld.apps.googleusercontent.com",
   });
 
-  // ------------------------
-  // Cargar datos guardados
-  // ------------------------
+  // -------------------------------------------------------------
+  // Cargar datos guardados (rememberMe)
+  // -------------------------------------------------------------
   useEffect(() => {
     const loadRememberedData = async () => {
       const savedRemember = await AsyncStorage.getItem("rememberMe");
@@ -60,45 +67,40 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
       if (savedRemember === "true") {
         setRememberMe(true);
 
-        if (savedEmail) {
-          setEmail(savedEmail);
-        }
+        if (savedEmail) setEmail(savedEmail);
 
-        // Autologin SOLO si rememberMe es true
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          navigation.replace("Home");
-        }
+        // Si ya hay sesión, entra directo
+        if (auth.currentUser) navigation.replace("Home");
       }
     };
 
     loadRememberedData();
   }, []);
 
-  // ------------------------
-  // Guardar usuario Google en Firestore
-  // ------------------------
+  // -------------------------------------------------------------
+  // Guardar usuario de Google al entrar por primera vez
+  // -------------------------------------------------------------
   const saveGoogleUser = async (user: any) => {
-    const userRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userRef);
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
 
-    if (!docSnap.exists()) {
-      await setDoc(userRef, {
+    if (!snap.exists()) {
+      await setDoc(ref, {
         NAME: user.displayName || "Usuario",
         SURNAMES: null,
         USERNAME: user.email?.split("@")[0] || "usuario",
-        DATE_BIRTH: null,
-        DELETE_MARK: "N",
-        DELETED_AT: null,
-        REGISTER_DATE: serverTimestamp(),
         EMAIL: user.email,
+        DATE_BIRTH: null,
+        REGISTER_DATE: serverTimestamp(),
+        DELETED_AT: null,
+        DELETE_MARK: "N",
       });
     }
   };
 
-  // ------------------------
+  // -------------------------------------------------------------
   // LOGIN NORMAL
-  // ------------------------
+  // -------------------------------------------------------------
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       return Toast.show({
@@ -111,9 +113,8 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
     setLoading(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
 
-      // Guardar o borrar preferencias según rememberMe
       if (rememberMe) {
         await AsyncStorage.setItem("rememberMe", "true");
         await AsyncStorage.setItem("savedEmail", email);
@@ -123,7 +124,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
       }
 
       navigation.replace("Home");
-    } catch (error: any) {
+    } catch (error) {
       Toast.show({
         type: "error",
         text1: "Credenciales inválidas",
@@ -134,12 +135,12 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
     }
   };
 
-  // ------------------------
-  // GOOGLE LOGIN
-  // ------------------------
+  // -------------------------------------------------------------
+  // LOGIN GOOGLE — Manejo de respuesta
+  // -------------------------------------------------------------
   useEffect(() => {
     if (response?.type === "success") {
-      const idToken = (response.authentication as any)?.id_token;
+      const idToken = response.authentication?.idToken;
       if (!idToken) return;
 
       const credential = GoogleAuthProvider.credential(idToken);
@@ -151,7 +152,10 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
 
           if (rememberMe) {
             await AsyncStorage.setItem("rememberMe", "true");
-            await AsyncStorage.setItem("savedEmail", userCredential.user.email || "");
+            await AsyncStorage.setItem(
+              "savedEmail",
+              userCredential.user.email || ""
+            );
           } else {
             await AsyncStorage.removeItem("rememberMe");
             await AsyncStorage.removeItem("savedEmail");
@@ -176,19 +180,21 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
     }
   }, [response]);
 
+  // -------------------------------------------------------------
+  // UI
+  // -------------------------------------------------------------
   return (
     <SafeAreaView style={globalStyles.container}>
       <ImageBackground
-        source={require('../images/fondo.png')}
+        source={require("../images/fondo.png")}
         style={globalStyles.backgroundImage}
         resizeMode="cover"
       >
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={globalStyles.content}
         >
           <View style={globalStyles.formContainer}>
-
             {/* EMAIL */}
             <TextInput
               style={globalStyles.LOGIN_input}
@@ -210,44 +216,84 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
               onChangeText={setPassword}
             />
 
-            {/* RECORDAR USUARIO */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+            {/* RECORDAR */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 10,
+              }}
+            >
               <Switch
                 value={rememberMe}
                 onValueChange={setRememberMe}
-                trackColor={{ false: '#ccc', true: '#FFA500' }}
+                trackColor={{ false: "#ccc", true: "#FFA500" }}
                 thumbColor="#fff"
               />
-              <Text style={{ marginLeft: 6, color: '#fff', fontFamily: 'Michroma', fontSize: 15 }}>
+              <Text
+                style={{
+                  marginLeft: 6,
+                  color: "#fff",
+                  fontFamily: "Michroma",
+                  fontSize: 15,
+                }}
+              >
                 Recordar
               </Text>
             </View>
 
-            {/* BOTÓN LOGIN */}
-            <TouchableOpacity style={globalStyles.LOGIN_Button} onPress={handleLogin} disabled={loading}>
-              <Text style={globalStyles.LOGIN_ButtonText}>Iniciar Sesión</Text>
+            {/* LOGIN */}
+            <TouchableOpacity
+              style={globalStyles.LOGIN_Button}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              <Text style={globalStyles.LOGIN_ButtonText}>
+                Iniciar Sesión
+              </Text>
             </TouchableOpacity>
 
-            {/* BOTÓN GOOGLE */}
-            <TouchableOpacity style={globalStyles.LOGIN_Button} onPress={() => promptAsync()} disabled={!request}>
-              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                <Image source={require('../images/google_icon.png')} style={{ width: 24, height: 24, marginRight: 12 }} />
-                <Text style={globalStyles.LOGIN_ButtonText}>Iniciar sesión con Google</Text>
+            {/* GOOGLE */}
+            <TouchableOpacity
+              style={globalStyles.LOGIN_Button}
+              onPress={() => promptAsync()}
+              disabled={!request}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Image
+                  source={require("../images/google_icon.png")}
+                  style={{ width: 24, height: 24, marginRight: 12 }}
+                />
+                <Text style={globalStyles.LOGIN_ButtonText}>
+                  Iniciar sesión con Google
+                </Text>
               </View>
             </TouchableOpacity>
 
-            {/* RECUPERAR CONTRASEÑA */}
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+            {/* FORGOT PASSWORD */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ForgotPassword")}
+            >
               <Text style={globalStyles.LOGIN_forgotPasswordText}>
                 ¿Olvidaste tu contraseña?
               </Text>
             </TouchableOpacity>
 
-            {/* CREAR CUENTA */}
-            <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ alignItems: 'center', marginTop: 10 }}>
-              <Text style={globalStyles.LOGIN_newAccountText}>Crear cuenta nueva</Text>
+            {/* REGISTER */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Register")}
+              style={{ alignItems: "center", marginTop: 10 }}
+            >
+              <Text style={globalStyles.LOGIN_newAccountText}>
+                Crear cuenta nueva
+              </Text>
             </TouchableOpacity>
-
           </View>
         </KeyboardAvoidingView>
 
@@ -255,21 +301,24 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 
           ShootTracker v20.3.25 [Build 1]
         </Text>
       </ImageBackground>
+
       <Toast />
 
-      {/* SPINNER DE CARGA */}
+      {/* LOADING OVERLAY */}
       {loading && (
-        <View style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.93)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 999,
-        }}>
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.93)",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 999,
+          }}
+        >
           <ActivityIndicator size="large" color="#FFA500" />
         </View>
       )}

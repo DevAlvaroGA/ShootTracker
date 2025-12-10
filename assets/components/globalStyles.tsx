@@ -492,125 +492,109 @@ export const globalStyles = StyleSheet.create({
         flex: 1,
     },
     // ---------- NEW GAME ----------
-    NW_container: {
-        flex: 1,
-        backgroundColor: '#000',
-        padding: 20,
-    },
-    NW_title: {
-        fontSize: 30,
-        color: '#FB6600',
-        marginVertical: 20,
-        fontFamily: 'Michroma',
-        textAlign: 'center',
-    },
-    NW_input: {
-        width: '100%',
-        backgroundColor: '#1a1a1a',
-        color: '#fff',
-        fontSize: 18,
-        paddingHorizontal: 15,
-        paddingVertical: 12,
-        borderRadius: 10,
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#FB6600',
-        fontFamily: 'Michroma',
-    },
-    NW_label: {
-        color: '#fff',
-        marginBottom: 5,
-        fontFamily: 'Michroma',
-        fontSize: 16,
-    },
-    NW_pickerContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 15,
-    },
-    NW_picker: {
-        flex: 1,
-        color: '#fff',
-        backgroundColor: '#1a1a1a',
-        marginHorizontal: 2,
-        borderRadius: 10,
-    },
-    NW_dropdown: {
-        backgroundColor: '#1a1a1a',
-        borderColor: '#FB6600',
-        borderWidth: 1,
-        borderRadius: 10,
-        marginBottom: 15,
-    },
-    NW_dropdownContainer: {
-        backgroundColor: '#1a1a1a',
-        borderColor: '#FB6600',
-        borderWidth: 1,
-    },
-    NW_dropdownText: {
-        color: '#fff',
-        fontFamily: 'Michroma',
-        fontSize: 16,
-    },
-    NW_rowContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-    },
-    NW_numberInputContainer: {
-        flex: 1,
-        marginHorizontal: 5,
-    },
-    NW_smallLabel: {
-        color: '#fff',
-        fontFamily: 'Michroma',
-        marginBottom: 5,
-        fontSize: 14,
-    },
-    NW_numberInput: {
-        backgroundColor: '#1a1a1a',
-        color: '#fff',
-        fontSize: 16,
-        paddingHorizontal: 15,
-        paddingVertical: 12,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#FB6600',
-    },
-    NW_primaryButton: {
-        backgroundColor: Colors.naranjaPrincipal,
-        paddingVertical: 14,
-        paddingHorizontal: 30,
-        borderRadius: 10,
-        marginTop: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    NW_primaryButtonText: {
-        color: Colors.negro,
-        fontSize: 18,
-        fontWeight: '600',
-        textAlign: 'center',
-        fontFamily: 'Michroma',
-    },
-    NW_logoutText: {
-        color: "#000",
-        fontFamily: "Michroma",
-        fontSize: 14,
-        fontWeight: "bold",
-    },
-    NW_logoutButton: {
-        position: "absolute",
-        top: 15,
-        right: 15,
-        backgroundColor: "#FFA500",
-        paddingVertical: 8,
-        paddingHorizontal: 15,
-        borderRadius: 8,
-        zIndex: 999,
-        flexDirection: "row",
-        alignItems: "center",
-    },
+// ---------- NEW GAME (ORIGINAL RESTAURADO) ----------
+NW_container: {
+    flex: 1,
+    backgroundColor: '#000',
+    padding: 20,
+},
+NW_title: {
+    fontSize: 30,
+    color: '#FB6600',
+    marginVertical: 20,
+    fontFamily: 'Michroma',
+    textAlign: 'center',
+},
+NW_input: {
+    width: '100%',
+    backgroundColor: '#1a1a1a',
+    color: '#fff',
+    fontSize: 16,            // <-- antes era 16
+    paddingHorizontal: 12,   // <-- antes era menos
+    paddingVertical: 10,
+    borderRadius: 8,         // <-- antes era 8, no 10
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#FB6600',
+    fontFamily: 'Michroma',
+},
+NW_label: {
+    color: '#fff',
+    marginBottom: 5,
+    fontFamily: 'Michroma',
+    fontSize: 15,            // <-- antes no era 16
+},
+NW_pickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+},
+NW_picker: {
+    flex: 1,
+    color: '#fff',
+    backgroundColor: '#1a1a1a',
+    marginHorizontal: 2,
+    borderRadius: 8,
+},
+NW_dropdown: {
+    backgroundColor: '#1a1a1a',
+    borderColor: '#FB6600',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 12,
+},
+NW_dropdownContainer: {
+    backgroundColor: '#1a1a1a',
+    borderColor: '#FB6600',
+    borderWidth: 1,
+},
+NW_dropdownText: {
+    color: '#fff',
+    fontFamily: 'Michroma',
+    fontSize: 15,
+},
+NW_rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+},
+NW_numberInputContainer: {
+    flex: 1,
+    marginHorizontal: 5,
+},
+NW_smallLabel: {
+    color: '#fff',
+    fontFamily: 'Michroma',
+    marginBottom: 5,
+    fontSize: 13,
+},
+NW_numberInput: {
+    backgroundColor: '#1a1a1a',
+    color: '#fff',
+    fontSize: 15,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FB6600',
+},
+NW_primaryButton: {
+    backgroundColor: Colors.naranjaPrincipal,
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    borderRadius: 8,
+    marginTop: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+NW_primaryButtonText: {
+    color: Colors.negro,
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    fontFamily: 'Michroma',
+},
+
 
 
     // ERRORES (para mensajes locales o Toast)
@@ -796,166 +780,185 @@ export const globalStyles = StyleSheet.create({
     },
     // ---------- PROFILE SCREEN ----------
 
-    PRF_container: {
-        flex: 1,
-        backgroundColor: "#000",
-        paddingHorizontal: 20,
-    },
+PRF_container: {
+    flex: 1,
+    backgroundColor: "#000",
+    paddingHorizontal: 20,
+},
 
-    PRF_loading: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#000",
-    },
+PRF_loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000",
+},
 
-    PRF_centered: {
-        alignItems: "center",
-        marginTop: 20,
-    },
+PRF_profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 10,
+},
 
-    PRF_profileImage: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom: 10,
-    },
+PRF_username: {
+    color: "#FFA500",
+    fontFamily: "Michroma",
+    fontSize: 22,
+    marginBottom: 14,
+    textAlign: "center",
+},
 
-    PRF_username: {
-        color: "#FFA500",
-        fontFamily: "Michroma",
-        fontSize: 22,
-        marginBottom: 10,
-    },
+PRF_usernameInput: {
+    color: "#FFA500",
+    fontFamily: "Michroma",
+    fontSize: 22,
+    borderBottomWidth: 1,
+    borderColor: "#FFA500",
+    paddingVertical: 6,
+    width: 240,
+    textAlign: "center",
+    marginBottom: 16,
+},
 
-    PRF_editButton: {
-        backgroundColor: "#FFA500",
-        paddingHorizontal: 20,
-        paddingVertical: 8,
-        borderRadius: 10,
-        marginTop: 5,
-    },
+PRF_editButton: {
+    backgroundColor: "#FFA500",
+    paddingHorizontal: 22,
+    paddingVertical: 8,
+    borderRadius: 10,
+    marginTop: 6,
+},
 
-    PRF_editButtonText: {
-        fontFamily: "Michroma",
-        color: "#000",
-        fontSize: 14,
-    },
+PRF_editButtonText: {
+    fontFamily: "Michroma",
+    color: "#000",
+    fontSize: 14,
+},
 
-    // ---------- INFO CARD ----------
+// ---------- INFO CARD ----------
 
-    PRF_infoCard: {
-        backgroundColor: "#111",
-        borderRadius: 12,
-        padding: 15,
-        marginTop: 20,
-        borderWidth: 1,
-        borderColor: "#333",
-    },
+PRF_infoCard: {
+    backgroundColor: "#111",
+    borderRadius: 12,
+    padding: 15,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: "#333",
+},
 
-    PRF_infoLabel: {
-        color: "#FFA500",
-        fontFamily: "Michroma",
-        fontSize: 14,
-        marginTop: 12,
-    },
+PRF_infoLabel: {
+    color: "#FFA500",
+    fontFamily: "Michroma",
+    fontSize: 14,
+    marginTop: 12,
+},
 
-    PRF_infoValue: {
-        color: "#fff",
-        fontFamily: "Michroma",
-        fontSize: 13,
-        marginTop: 4,
-    },
+PRF_infoValue: {
+    color: "#fff",
+    fontFamily: "Michroma",
+    fontSize: 13,
+    marginTop: 4,
+},
 
-    PRF_bioInput: {
-        backgroundColor: "#222",
-        color: "#fff",
-        padding: 10,
-        borderRadius: 8,
-        marginTop: 5,
-        minHeight: 70,
-        textAlignVertical: "top",
-        fontFamily: "Michroma",
-    },
+PRF_bioInput: {
+    backgroundColor: "#222",
+    color: "#fff",
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 5,
+    minHeight: 80,
+    textAlignVertical: "top",
+    fontFamily: "Michroma",
+},
 
-    // PICKERS
-    PRF_pickerWrapper: {
-        backgroundColor: "#222",
-        borderWidth: 1,
-        borderColor: "#444",
-        borderRadius: 8,
-        marginTop: 5,
-    },
+// ---------- PICKERS ----------
 
-    PRF_picker: {
-        color: "#FFA500",
-        height: 40,
-        paddingLeft: 5,
-    },
+PRF_pickerWrapper: {
+    backgroundColor: "#1a1a1a",
+    borderWidth: 1,
+    borderColor: "#444",
+    borderRadius: 8,
+    marginTop: 6,
+    height: 50,
+    justifyContent: "center",
+},
 
-    // ---------- STATS CARD ----------
-    PRF_statsCard: {
-        backgroundColor: "#111",
-        borderRadius: 12,
-        padding: 15,
-        marginTop: 20,
-        borderWidth: 1,
-        borderColor: "#333",
-    },
+PRF_picker: {
+    color: "#FFA500",
+    fontFamily: "Michroma",
+    width: "100%",
+    height: 50,
+    paddingLeft: 8,
+},
 
-    PRF_statsText: {
-        color: "#fff",
-        fontFamily: "Michroma",
-        fontSize: 14,
-        marginBottom: 8,
-    },
+// Para DropDownPicker (modo favorito)
+PRF_dropdown: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#444",
+    height: 50,
+},
 
-    // ---------- SAVE / CANCEL ----------
-    PRF_buttonsRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 25,
-        marginBottom: 30,
-    },
+PRF_dropdownContainer: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#444",
+},
 
-    PRF_saveButton: {
-        flex: 1,
-        backgroundColor: "#FFA500",
-        paddingVertical: 10,
-        borderRadius: 10,
-        marginRight: 10,
-        alignItems: "center",
-    },
-    PRF_saveButtonText: {
-        fontFamily: "Michroma",
-        fontSize: 15,
-        color: "#000",
-    },
+// ---------- STATS CARD ----------
 
-    PRF_cancelButton: {
-        flex: 1,
-        backgroundColor: "#333",
-        paddingVertical: 10,
-        borderRadius: 10,
-        marginLeft: 10,
-        alignItems: "center",
-    },
-    PRF_cancelButtonText: {
-        fontFamily: "Michroma",
-        fontSize: 15,
-        color: "#fff",
-    },
-    PRF_usernameInput: {
-        color: "#FFA500",
-        fontFamily: "Michroma",
-        fontSize: 22,
-        borderBottomWidth: 1,
-        borderColor: "#FFA500",
-        paddingVertical: 4,
-        width: 200,
-        textAlign: "center",
-        marginBottom: 10,
-    },
+PRF_statsCard: {
+    backgroundColor: "#111",
+    borderRadius: 12,
+    padding: 15,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: "#333",
+},
+
+PRF_statsText: {
+    color: "#fff",
+    fontFamily: "Michroma",
+    fontSize: 14,
+    marginBottom: 8,
+},
+
+// ---------- SAVE / CANCEL ----------
+
+PRF_buttonsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 25,
+    marginBottom: 30,
+},
+
+PRF_saveButton: {
+    flex: 1,
+    backgroundColor: "#FFA500",
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginRight: 10,
+    alignItems: "center",
+},
+
+PRF_saveButtonText: {
+    fontFamily: "Michroma",
+    fontSize: 15,
+    color: "#000",
+},
+
+PRF_cancelButton: {
+    flex: 1,
+    backgroundColor: "#333",
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginLeft: 10,
+    alignItems: "center",
+},
+
+PRF_cancelButtonText: {
+    fontFamily: "Michroma",
+    fontSize: 15,
+    color: "#fff",
+},
+
     // ---------------- VERIFY EMAIL SCREEN ----------------
     verify_container: {
         flex: 1,
