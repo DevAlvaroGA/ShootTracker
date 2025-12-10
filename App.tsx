@@ -13,7 +13,7 @@ import NewGameScreen from './assets/screens/NewGame';
 import ForgotPasswordScreen from './assets/screens/ForgotPassword';
 import ProfileScreen from './assets/screens/Profile';
 import HistoryScreen from './assets/screens/History';
-import Map from './assets/screens/Map';
+// import Map from './assets/screens/Map';
 import VerifyEmailScreen from './assets/screens/VerifyEmailScreen';
 
 import { globalStyles } from './assets/components/globalStyles';
