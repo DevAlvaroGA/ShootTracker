@@ -31,6 +31,24 @@ export const globalStyles = StyleSheet.create({
         color: Colors.blanco,
         fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
     },
+    inputPasswordContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        borderWidth: 2,
+        borderColor: Colors.naranjaPrincipal,
+        borderRadius: 10,
+        paddingHorizontal: 8,
+        marginBottom: 12,
+        backgroundColor: "rgba(0,0,0,0.6)",
+    },
+
+    showPasswordIcon: {
+        fontSize: 20,
+        color: "#FB6600",
+        paddingHorizontal: 8,
+        fontFamily: "Michroma",
+    },
+
 
     //---------------- IMAGEN DE FONDO (Si usas un enfoque de fondo con dos capas, como se sugiere aquí)
     containerFondo: {
@@ -249,6 +267,8 @@ export const globalStyles = StyleSheet.create({
         fontSize: 15,
         textAlign: 'center',
         marginTop: 4,
+        paddingVertical: 10,
+        marginVertical: 10,
         fontFamily: 'Michroma',
     },
     REGISTER_titleText: {
@@ -491,119 +511,115 @@ export const globalStyles = StyleSheet.create({
         alignItems: "flex-end",
         flex: 1,
     },
-    // ---------- NEW GAME ----------
-// ---------- NEW GAME (ORIGINAL RESTAURADO) ----------
-NW_container: {
-    flex: 1,
-    backgroundColor: '#000',
-    padding: 20,
-},
-NW_title: {
-    fontSize: 30,
-    color: '#FB6600',
-    marginVertical: 20,
-    fontFamily: 'Michroma',
-    textAlign: 'center',
-},
-NW_input: {
-    width: '100%',
-    backgroundColor: '#1a1a1a',
-    color: '#fff',
-    fontSize: 16,            // <-- antes era 16
-    paddingHorizontal: 12,   // <-- antes era menos
-    paddingVertical: 10,
-    borderRadius: 8,         // <-- antes era 8, no 10
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#FB6600',
-    fontFamily: 'Michroma',
-},
-NW_label: {
-    color: '#fff',
-    marginBottom: 5,
-    fontFamily: 'Michroma',
-    fontSize: 15,            // <-- antes no era 16
-},
-NW_pickerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-},
-NW_picker: {
-    flex: 1,
-    color: '#fff',
-    backgroundColor: '#1a1a1a',
-    marginHorizontal: 2,
-    borderRadius: 8,
-},
-NW_dropdown: {
-    backgroundColor: '#1a1a1a',
-    borderColor: '#FB6600',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 12,
-},
-NW_dropdownContainer: {
-    backgroundColor: '#1a1a1a',
-    borderColor: '#FB6600',
-    borderWidth: 1,
-},
-NW_dropdownText: {
-    color: '#fff',
-    fontFamily: 'Michroma',
-    fontSize: 15,
-},
-NW_rowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-},
-NW_numberInputContainer: {
-    flex: 1,
-    marginHorizontal: 5,
-},
-NW_smallLabel: {
-    color: '#fff',
-    fontFamily: 'Michroma',
-    marginBottom: 5,
-    fontSize: 13,
-},
-NW_numberInput: {
-    backgroundColor: '#1a1a1a',
-    color: '#fff',
-    fontSize: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FB6600',
-},
-NW_primaryButton: {
-    backgroundColor: Colors.naranjaPrincipal,
-    paddingVertical: 12,
-    paddingHorizontal: 22,
-    borderRadius: 8,
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-},
-NW_primaryButtonText: {
-    color: Colors.negro,
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Michroma',
-},
-
-
-
-    // ERRORES (para mensajes locales o Toast)
-    NW_ER_text: {
-        color: 'red',
-        marginBottom: 10,
-        fontSize: 14,
-        fontFamily: 'Michroma',
+    // NEW GAME
+    NW_container: {
+        flex: 1,
+        backgroundColor: "#000",
+        padding: 16,
     },
+
+    NW_title: {
+        fontFamily: "Michroma",
+        fontSize: 24,
+        color: "#FF8800",
+        marginBottom: 10,
+        textAlign: "center",
+    },
+
+    NW_input: {
+        backgroundColor: "rgba(0,0,0,0.6)",
+        borderWidth: 1,
+        borderColor: "#FF8800",
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        marginBottom: 12,
+        color: "#fff",            // <-- TEXTO VISIBLE
+        fontFamily: "Michroma",
+    },
+
+
+    NW_label: {
+        fontFamily: "Michroma",
+        color: "#FF8800",
+        marginBottom: 6,
+        marginTop: 8,
+    },
+
+    NW_pickerRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    },
+
+    NW_picker: {
+        flex: 1,
+        backgroundColor: "#111",
+        color: "#fff",
+        marginHorizontal: 4,
+        borderWidth: 1,
+        borderColor: "#FF8800",
+        borderRadius: 10,
+    },
+
+    // DROPDOWNS
+    NW_dropdown: {
+        backgroundColor: "rgba(0,0,0,0.6)",
+        borderColor: "#FF8800",
+        borderWidth: 1,
+        marginBottom: 14,
+    },
+
+    NW_dropdownContainer: {
+        backgroundColor: "#000",
+        borderColor: "#FF8800",
+        borderWidth: 1,
+    },
+
+    // NUMBER INPUTS
+    NW_row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginVertical: 12,
+    },
+
+    NW_numberInputWrap: {
+        flex: 1,
+        marginHorizontal: 4,
+    },
+
+    NW_smallLabel: {
+        fontFamily: "Michroma",
+        color: "#FF8800",
+        marginBottom: 4,
+    },
+
+    NW_numberInput: {
+        backgroundColor: "rgba(0,0,0,0.6)",
+        borderWidth: 1,
+        borderColor: "#FF8800",
+        borderRadius: 10,
+        padding: 10,
+        color: "#fff",            // <-- TEXTO VISIBLE
+        fontFamily: "Michroma",
+    },
+
+
+    NW_primaryButton: {
+        backgroundColor: "#FF8800",
+        paddingVertical: 12,
+        borderRadius: 10,
+        marginTop: 20,
+    },
+
+    NW_primaryButtonText: {
+        textAlign: "center",
+        fontFamily: "Michroma",
+        color: "#000",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+
 
     //---------------- EXTRAS ----------------
     floatingButton: {
@@ -780,184 +796,184 @@ NW_primaryButtonText: {
     },
     // ---------- PROFILE SCREEN ----------
 
-PRF_container: {
-    flex: 1,
-    backgroundColor: "#000",
-    paddingHorizontal: 20,
-},
+    PRF_container: {
+        flex: 1,
+        backgroundColor: "#000",
+        paddingHorizontal: 20,
+    },
 
-PRF_loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#000",
-},
+    PRF_loading: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#000",
+    },
 
-PRF_profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 10,
-},
+    PRF_profileImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        marginBottom: 10,
+    },
 
-PRF_username: {
-    color: "#FFA500",
-    fontFamily: "Michroma",
-    fontSize: 22,
-    marginBottom: 14,
-    textAlign: "center",
-},
+    PRF_username: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 22,
+        marginBottom: 14,
+        textAlign: "center",
+    },
 
-PRF_usernameInput: {
-    color: "#FFA500",
-    fontFamily: "Michroma",
-    fontSize: 22,
-    borderBottomWidth: 1,
-    borderColor: "#FFA500",
-    paddingVertical: 6,
-    width: 240,
-    textAlign: "center",
-    marginBottom: 16,
-},
+    PRF_usernameInput: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 22,
+        borderBottomWidth: 1,
+        borderColor: "#FFA500",
+        paddingVertical: 6,
+        width: 240,
+        textAlign: "center",
+        marginBottom: 16,
+    },
 
-PRF_editButton: {
-    backgroundColor: "#FFA500",
-    paddingHorizontal: 22,
-    paddingVertical: 8,
-    borderRadius: 10,
-    marginTop: 6,
-},
+    PRF_editButton: {
+        backgroundColor: "#FFA500",
+        paddingHorizontal: 22,
+        paddingVertical: 8,
+        borderRadius: 10,
+        marginTop: 6,
+    },
 
-PRF_editButtonText: {
-    fontFamily: "Michroma",
-    color: "#000",
-    fontSize: 14,
-},
+    PRF_editButtonText: {
+        fontFamily: "Michroma",
+        color: "#000",
+        fontSize: 14,
+    },
 
-// ---------- INFO CARD ----------
+    // ---------- INFO CARD ----------
 
-PRF_infoCard: {
-    backgroundColor: "#111",
-    borderRadius: 12,
-    padding: 15,
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: "#333",
-},
+    PRF_infoCard: {
+        backgroundColor: "#111",
+        borderRadius: 12,
+        padding: 15,
+        marginTop: 20,
+        borderWidth: 1,
+        borderColor: "#333",
+    },
 
-PRF_infoLabel: {
-    color: "#FFA500",
-    fontFamily: "Michroma",
-    fontSize: 14,
-    marginTop: 12,
-},
+    PRF_infoLabel: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 14,
+        marginTop: 12,
+    },
 
-PRF_infoValue: {
-    color: "#fff",
-    fontFamily: "Michroma",
-    fontSize: 13,
-    marginTop: 4,
-},
+    PRF_infoValue: {
+        color: "#fff",
+        fontFamily: "Michroma",
+        fontSize: 13,
+        marginTop: 4,
+    },
 
-PRF_bioInput: {
-    backgroundColor: "#222",
-    color: "#fff",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 5,
-    minHeight: 80,
-    textAlignVertical: "top",
-    fontFamily: "Michroma",
-},
+    PRF_bioInput: {
+        backgroundColor: "#222",
+        color: "#fff",
+        padding: 12,
+        borderRadius: 8,
+        marginTop: 5,
+        minHeight: 80,
+        textAlignVertical: "top",
+        fontFamily: "Michroma",
+    },
 
-// ---------- PICKERS ----------
+    // ---------- PICKERS ----------
 
-PRF_pickerWrapper: {
-    backgroundColor: "#1a1a1a",
-    borderWidth: 1,
-    borderColor: "#444",
-    borderRadius: 8,
-    marginTop: 6,
-    height: 50,
-    justifyContent: "center",
-},
+    PRF_pickerWrapper: {
+        backgroundColor: "#1a1a1a",
+        borderWidth: 1,
+        borderColor: "#444",
+        borderRadius: 8,
+        marginTop: 6,
+        height: 50,
+        justifyContent: "center",
+    },
 
-PRF_picker: {
-    color: "#FFA500",
-    fontFamily: "Michroma",
-    width: "100%",
-    height: 50,
-    paddingLeft: 8,
-},
+    PRF_picker: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        width: "100%",
+        height: 50,
+        paddingLeft: 8,
+    },
 
-// Para DropDownPicker (modo favorito)
-PRF_dropdown: {
-    backgroundColor: "#1a1a1a",
-    borderColor: "#444",
-    height: 50,
-},
+    // Para DropDownPicker (modo favorito)
+    PRF_dropdown: {
+        backgroundColor: "#1a1a1a",
+        borderColor: "#444",
+        height: 50,
+    },
 
-PRF_dropdownContainer: {
-    backgroundColor: "#1a1a1a",
-    borderColor: "#444",
-},
+    PRF_dropdownContainer: {
+        backgroundColor: "#1a1a1a",
+        borderColor: "#444",
+    },
 
-// ---------- STATS CARD ----------
+    // ---------- STATS CARD ----------
 
-PRF_statsCard: {
-    backgroundColor: "#111",
-    borderRadius: 12,
-    padding: 15,
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: "#333",
-},
+    PRF_statsCard: {
+        backgroundColor: "#111",
+        borderRadius: 12,
+        padding: 15,
+        marginTop: 20,
+        borderWidth: 1,
+        borderColor: "#333",
+    },
 
-PRF_statsText: {
-    color: "#fff",
-    fontFamily: "Michroma",
-    fontSize: 14,
-    marginBottom: 8,
-},
+    PRF_statsText: {
+        color: "#fff",
+        fontFamily: "Michroma",
+        fontSize: 14,
+        marginBottom: 8,
+    },
 
-// ---------- SAVE / CANCEL ----------
+    // ---------- SAVE / CANCEL ----------
 
-PRF_buttonsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 25,
-    marginBottom: 30,
-},
+    PRF_buttonsRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 25,
+        marginBottom: 30,
+    },
 
-PRF_saveButton: {
-    flex: 1,
-    backgroundColor: "#FFA500",
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginRight: 10,
-    alignItems: "center",
-},
+    PRF_saveButton: {
+        flex: 1,
+        backgroundColor: "#FFA500",
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginRight: 10,
+        alignItems: "center",
+    },
 
-PRF_saveButtonText: {
-    fontFamily: "Michroma",
-    fontSize: 15,
-    color: "#000",
-},
+    PRF_saveButtonText: {
+        fontFamily: "Michroma",
+        fontSize: 15,
+        color: "#000",
+    },
 
-PRF_cancelButton: {
-    flex: 1,
-    backgroundColor: "#333",
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginLeft: 10,
-    alignItems: "center",
-},
+    PRF_cancelButton: {
+        flex: 1,
+        backgroundColor: "#333",
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginLeft: 10,
+        alignItems: "center",
+    },
 
-PRF_cancelButtonText: {
-    fontFamily: "Michroma",
-    fontSize: 15,
-    color: "#fff",
-},
+    PRF_cancelButtonText: {
+        fontFamily: "Michroma",
+        fontSize: 15,
+        color: "#fff",
+    },
 
     // ---------------- VERIFY EMAIL SCREEN ----------------
     verify_container: {

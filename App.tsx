@@ -22,7 +22,6 @@ import * as Font from 'expo-font';
 import Toast, { BaseToast, ToastConfig } from 'react-native-toast-message';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
@@ -38,23 +37,51 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// =============================================================
+//  TOAST CONFIG – CORREGIDO PARA QUE SE VEA EN FONDO OSCURO
+// =============================================================
 const toastConfig: ToastConfig = {
   error: (props) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: '#FB6600', height: 80 }}
+      style={{
+        borderLeftColor: '#FB6600',
+        height: 80,
+        backgroundColor: '#494949d3'
+      }}
       contentContainerStyle={{ paddingHorizontal: 15 }}
-      text1Style={{ fontSize: 16, fontWeight: '700', color: '#fff', fontFamily: 'Michroma' }}
-      text2Style={{ fontSize: 14, color: '#fff', fontFamily: 'Michroma' }}
+      text1Style={{
+        fontSize: 14,
+        color: '#fff',
+        fontFamily: 'Michroma',
+      }}
+      text2Style={{
+        fontSize: 14,
+        color: '#fff',
+        fontFamily: 'Michroma',
+      }}
     />
   ),
+
   success: (props) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: '#00FF00', height: 80 }}
+      style={{
+        borderLeftColor: '#00FF00',
+        height: 80,
+        backgroundColor: '#494949d3',
+      }}
       contentContainerStyle={{ paddingHorizontal: 15 }}
-      text1Style={{ fontSize: 16, fontWeight: '700', color: '#fff', fontFamily: 'Michroma' }}
-      text2Style={{ fontSize: 14, color: '#fff', fontFamily: 'Michroma' }}
+      text1Style={{
+        fontSize: 14,
+        color: '#fff',
+        fontFamily: 'Michroma',
+      }}
+      text2Style={{
+        fontSize: 14,
+        color: '#fff',
+        fontFamily: 'Michroma',
+      }}
     />
   ),
 };
@@ -120,7 +147,7 @@ export default function App() {
           <Stack.Screen name="NewGame" component={NewGameScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />
-          <Stack.Screen name="Map" component={Map} />
+          {/* <Stack.Screen name="Map" component={Map} /> */}
           <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
         </Stack.Navigator>
       </NavigationContainer>

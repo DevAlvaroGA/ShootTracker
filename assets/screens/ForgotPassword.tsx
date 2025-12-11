@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, ImageBackground, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    SafeAreaView,
+    ImageBackground,
+    ActivityIndicator
+} from 'react-native';
+
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { auth } from '@/firebaseConfig';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { globalStyles } from '../components/globalStyles';
+import Toast from "react-native-toast-message";
 
 type RootStackParamList = {
     Login: undefined;
@@ -16,26 +26,47 @@ const ForgotPasswordScreen = ({ navigation }: NativeStackScreenProps<RootStackPa
 
     const handlePasswordReset = async () => {
         if (!email.trim()) {
-            Alert.alert('Error', 'Por favor, introduce tu correo electrónico.');
-            return;
+            return Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Introduce tu correo electrónico."
+            });
         }
 
         setLoading(true);
+
         try {
             await sendPasswordResetEmail(auth, email);
-            Alert.alert(
-                'Correo enviado',
-                'Hemos enviado un enlace a tu correo para restablecer la contraseña.'
-            );
-            navigation.goBack(); // vuelve al login
+
+            Toast.show({
+                type: "success",
+                text1: "Correo enviado",
+                text2: "Revisa tu bandeja de entrada."
+            });
+
+            navigation.goBack();
+
         } catch (error: any) {
-            console.log('Error al enviar correo:', error);
-            if (error.code === 'auth/user-not-found') {
-                Alert.alert('Error', 'No existe ninguna cuenta con ese correo.');
-            } else if (error.code === 'auth/invalid-email') {
-                Alert.alert('Error', 'El correo no es válido.');
+            console.log("Error al enviar correo:", error);
+
+            if (error.code === "auth/user-not-found") {
+                Toast.show({
+                    type: "error",
+                    text1: "Usuario no encontrado",
+                    text2: "No existe ninguna cuenta con ese correo."
+                });
+            } else if (error.code === "auth/invalid-email") {
+                Toast.show({
+                    type: "error",
+                    text1: "Correo inválido",
+                    text2: "Introduce un formato de correo válido."
+                });
             } else {
-                Alert.alert('Error', 'No se pudo enviar el correo. Inténtalo más tarde.');
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: "No se pudo enviar el correo. Inténtalo más tarde."
+                });
             }
         } finally {
             setLoading(false);

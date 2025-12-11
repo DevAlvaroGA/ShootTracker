@@ -28,6 +28,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import Toast from "react-native-toast-message";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import { Ionicons } from "@expo/vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -45,11 +46,12 @@ const LoginScreen = ({
 }: NativeStackScreenProps<RootStackParamList, "Login">) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   // -------------------------------------------------------------
-  // GOOGLE AUTH (CONFIGURACIÓN 2025 — SOLO clientId)
+  // GOOGLE AUTH
   // -------------------------------------------------------------
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId:
@@ -69,7 +71,6 @@ const LoginScreen = ({
 
         if (savedEmail) setEmail(savedEmail);
 
-        // Si ya hay sesión, entra directo
         if (auth.currentUser) navigation.replace("Home");
       }
     };
@@ -136,7 +137,7 @@ const LoginScreen = ({
   };
 
   // -------------------------------------------------------------
-  // LOGIN GOOGLE — Manejo de respuesta
+  // LOGIN GOOGLE
   // -------------------------------------------------------------
   useEffect(() => {
     if (response?.type === "success") {
@@ -207,14 +208,23 @@ const LoginScreen = ({
             />
 
             {/* PASSWORD */}
-            <TextInput
-              style={globalStyles.LOGIN_input}
-              placeholder="Contraseña"
-              placeholderTextColor="#888"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+            <View style={globalStyles.inputPasswordContainer}>
+              <TextInput
+                style={[globalStyles.LOGIN_input, { flex: 1, borderWidth: 0 }]}
+                placeholder="Contraseña"
+                placeholderTextColor="#888"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Ionicons
+                  name={showPassword ? "eye-off" : "eye"}
+                  size={24}
+                  color="#FB6600"
+                />
+              </TouchableOpacity>
+            </View>
 
             {/* RECORDAR */}
             <View
@@ -242,15 +252,13 @@ const LoginScreen = ({
               </Text>
             </View>
 
-            {/* LOGIN */}
+            {/* LOGIN BUTTON */}
             <TouchableOpacity
               style={globalStyles.LOGIN_Button}
               onPress={handleLogin}
               disabled={loading}
             >
-              <Text style={globalStyles.LOGIN_ButtonText}>
-                Iniciar Sesión
-              </Text>
+              <Text style={globalStyles.LOGIN_ButtonText}>Iniciar Sesión</Text>
             </TouchableOpacity>
 
             {/* GOOGLE */}
@@ -301,8 +309,6 @@ const LoginScreen = ({
           ShootTracker v20.3.25 [Build 1]
         </Text>
       </ImageBackground>
-
-      <Toast />
 
       {/* LOADING OVERLAY */}
       {loading && (

@@ -7,6 +7,8 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles';
 import Toast from 'react-native-toast-message';
+import { Ionicons } from "@expo/vector-icons";
+
 
 type RootStackParamList = {
   Login: undefined;
@@ -21,21 +23,24 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
   const validatePassword = (p: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(p);
 
   const handleRegister = () => {
     if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
-      return Toast.show({ type: 'error', text1: 'Completa todos los campos.' });
+      return Toast.show({ type: 'error', text1: 'Error', text2: 'Completa todos los campos.' });
     }
     if (!validateEmail(email)) {
-      return Toast.show({ type: 'error', text1: 'Correo no válido.' });
+      return Toast.show({ type: 'error', text1: 'Error', text2: 'Correo no válido.' });
     }
     if (!validatePassword(password)) {
-      return Toast.show({ type: 'error', text1: 'Contraseña débil.' });
+      return Toast.show({ type: 'error', text1: 'Error', text2: 'Contraseña débil.' });
     }
     if (password !== confirmPassword) {
-      return Toast.show({ type: 'error', text1: 'Las contraseñas no coinciden.' });
+      return Toast.show({ type: 'error', text1: 'Error', text2: 'Las contraseñas no coinciden.' });
     }
 
     setLoading(true);
@@ -47,30 +52,87 @@ const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamLis
 
   return (
     <SafeAreaView style={globalStyles.container}>
-      <ImageBackground source={require('../images/fondo.png')} style={globalStyles.backgroundImage} resizeMode="cover">
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={globalStyles.content}>
+      <ImageBackground
+        source={require('../images/fondo.png')}
+        style={globalStyles.backgroundImage}
+        resizeMode="cover"
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={globalStyles.content}
+        >
           <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
             <View style={globalStyles.REGISTER_formContainer}>
               <Text style={globalStyles.REGISTER_titleText}>Registro</Text>
 
-              <TextInput style={globalStyles.REGISTER_input} placeholder="Correo electrónico" placeholderTextColor="#888"
-                value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+              {/* EMAIL */}
+              <TextInput
+                style={globalStyles.REGISTER_input}
+                placeholder="Correo electrónico"
+                placeholderTextColor="#888"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
 
-              <TextInput style={globalStyles.REGISTER_input} placeholder="Contraseña" placeholderTextColor="#888"
-                value={password} onChangeText={setPassword} secureTextEntry />
+              {/* PASSWORD */}
+              <View style={globalStyles.inputPasswordContainer}>
+                <TextInput
+                  style={[globalStyles.REGISTER_input, { flex: 1, borderWidth: 0 }]}
+                  placeholder="Contraseña"
+                  placeholderTextColor="#888"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  <Ionicons
+                    name={showPassword ? "eye-off" : "eye"}
+                    size={24}
+                    color="#FF8800"
+                  />
 
-              <TextInput style={globalStyles.REGISTER_input} placeholder="Confirmar contraseña" placeholderTextColor="#888"
-                value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+                </TouchableOpacity>
+              </View>
 
-              {loading && <ActivityIndicator size="large" color="#FFA500" />}
+              {/* CONFIRM PASSWORD */}
+              <View style={globalStyles.inputPasswordContainer}>
+                <TextInput
+                  style={[globalStyles.REGISTER_input, { flex: 1, borderWidth: 0 }]}
+                  placeholder="Confirmar contraseña"
+                  placeholderTextColor="#888"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfirmPassword}
+                />
+                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                  <Ionicons
+                    name={showConfirmPassword ? "eye-off" : "eye"}
+                    size={24}
+                    color="#FF8800"
+                  />
+                </TouchableOpacity>
+              </View>
 
-              <TouchableOpacity style={globalStyles.REGISTER_Button} onPress={handleRegister} disabled={loading}>
+
+              {loading && <ActivityIndicator size="large" color="#FF8800" />}
+
+              <TouchableOpacity
+                style={globalStyles.REGISTER_Button}
+                onPress={handleRegister}
+                disabled={loading}
+              >
                 <Text style={globalStyles.REGISTER_ButtonText}>Continuar</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text style={globalStyles.REGISTER_HaveAccountText}>¿Ya tienes cuenta? <Text style={{ color: '#FF8800' }}>Iniciar sesión</Text></Text>
+                <Text style={globalStyles.REGISTER_HaveAccountText}>
+                  ¿Ya tienes cuenta?
+                  <Text style={{ color: '#FF8800' }}> Iniciar sesión</Text>
+                </Text>
               </TouchableOpacity>
+
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

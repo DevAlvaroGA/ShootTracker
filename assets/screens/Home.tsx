@@ -23,6 +23,7 @@ import {
   orderBy,
   limit,
   onSnapshot,
+  getDocs,
   Timestamp,
 } from "firebase/firestore";
 
@@ -33,51 +34,85 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import type { RootStackParamList } from "../../App";
 
-
 type Match = {
   id: string;
   kills: number;
   deaths: number;
-  weapon1: string | number;
-  weapon2: string | number;
+  weapon1: string;
+  weapon2: string;
   fieldName: string;
   score: number;
   result: string;
   createdAt: Timestamp;
 };
 
-
-const HomeScreen = ({
+export default function HomeScreen({
   navigation,
-}: NativeStackScreenProps<RootStackParamList, "Home">) => {
-
+}: NativeStackScreenProps<RootStackParamList, "Home">) {
   const [lastMatches, setLastMatches] = useState<Match[]>([]);
+  const [masterMap, setMasterMap] = useState<{ [key: string]: string }>({});
 
-  // ----------------- MENÚ -----------------
+  // MENU
   const [menuOpen, setMenuOpen] = useState(false);
-  const slideAnim = useState(new Animated.Value(-250))[0]; // ancho menú 250
+  const slideAnim = useState(new Animated.Value(-250))[0];
 
-  // BLOQUEAR BOTÓN ATRÁS EN ANDROID
+  // Block back
   useFocusEffect(
     React.useCallback(() => {
-      const onBackPress = () => true; // bloquea el botón atrás
+      const onBackPress = () => true;
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [])
   );
 
-  // Mantener sesión
+  // Auth session
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
       if (!user) navigation.replace("Login");
+    });
+    return unsub;
+  }, []);
+
+  // Load master catalog → dictionary
+  useEffect(() => {
+    const loadMaster = async () => {
+      const snap = await getDocs(collection(db, "master"));
+      const map: any = {};
+      snap.docs.forEach((doc) => {
+        const data = doc.data();
+        if (data.name) map[doc.id] = data.name;
+      });
+      setMasterMap(map);
+    };
+
+    loadMaster();
+  }, []);
+
+  // Load last matches
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    const q = query(
+      collection(db, "games"),
+      where("uid", "==", uid),
+      where("delete_mark", "==", "N"),
+      orderBy("createdAt", "desc"),
+      limit(5)
+    );
+
+    const unsub = onSnapshot(q, (snap) => {
+      const arr = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Match[];
+      setLastMatches(arr.reverse());
     });
 
     return unsub;
   }, []);
 
-  // ----------------- MENÚ ANIMADO -----------------
+  const chartLabels = lastMatches.map((_, i) => `Partida ${i + 1}`);
+  const screenWidth = Dimensions.get("window").width - 20;
+
   const toggleMenu = () => {
     if (menuOpen) {
       Animated.timing(slideAnim, {
@@ -100,48 +135,15 @@ const HomeScreen = ({
     navigation.navigate(screen as any);
   };
 
-  // ----------------- LOGOUT -----------------
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("rememberUser");
-      await AsyncStorage.removeItem("savedEmail");
-      await AsyncStorage.removeItem("savedPassword");
+      await AsyncStorage.clear();
       await signOut(auth);
       navigation.replace("Login");
-    } catch (error) {
-      console.log("Error al cerrar sesión:", error);
+    } catch (err) {
+      console.log("Logout error:", err);
     }
   };
-
-  // ----------------- FIRESTORE: ÚLTIMAS PARTIDAS -----------------
-  useEffect(() => {
-    const uid = auth.currentUser?.uid;
-    if (!uid) return;
-
-    const q = query(
-      collection(db, "games"),
-      where("uid", "==", uid),
-      where("delete_mark", "==", "N"),
-      orderBy("createdAt", "desc"),
-      limit(5)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data: Match[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Match[];
-
-      // Reverse = para mostrar cronológicamente (más antiguo → más nuevo)
-      setLastMatches(data.reverse());
-    });
-
-    return unsubscribe;
-  }, []);
-
-  const screenWidth = Dimensions.get("window").width - 20;
-  const chartLabels = lastMatches.map((_, i) => `Partida ${i + 1}`);
-
 
   return (
     <SafeAreaView
@@ -150,7 +152,6 @@ const HomeScreen = ({
         { backgroundColor: "#000", paddingTop: 120, paddingHorizontal: 10 },
       ]}
     >
-
       {/* HEADER */}
       <View style={globalStyles.HM_headerBar}>
         <View style={globalStyles.HM_headerLeft}>
@@ -173,7 +174,7 @@ const HomeScreen = ({
         </View>
       </View>
 
-      {/* OVERLAY - Cierra menú */}
+      {/* OVERLAY */}
       {menuOpen && (
         <TouchableOpacity
           style={globalStyles.HM_menuOverlay}
@@ -181,7 +182,7 @@ const HomeScreen = ({
         />
       )}
 
-      {/* MENÚ LATERAL */}
+      {/* SIDE MENU */}
       <Animated.View
         style={[globalStyles.HM_menuContainer, { left: slideAnim }]}
       >
@@ -223,8 +224,7 @@ const HomeScreen = ({
         </TouchableOpacity>
       </Animated.View>
 
-
-      {/* ESTADÍSTICAS */}
+      {/* STATS */}
       <Text style={globalStyles.HM_title}>Estadísticas Recientes</Text>
 
       {lastMatches.length > 0 ? (
@@ -251,7 +251,7 @@ const HomeScreen = ({
             backgroundGradientFrom: "#1b1b1bff",
             backgroundGradientTo: "#1a1a1a",
             decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255,255,255,${opacity})`,
+            color: () => "#fff",
             labelColor: () => "#fff",
             style: {
               borderRadius: 16,
@@ -273,7 +273,7 @@ const HomeScreen = ({
         </Text>
       )}
 
-      {/* HISTORIAL */}
+      {/* TABLE */}
       <Text style={globalStyles.HM_subtitle}>Historial de Partidas</Text>
 
       {lastMatches.length > 0 && (
@@ -281,12 +281,8 @@ const HomeScreen = ({
           <View style={[globalStyles.HM_tableRow, globalStyles.HM_tableHeader]}>
             <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Partida</Text>
             <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Campo</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-              Arma 1
-            </Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-              Arma 2
-            </Text>
+            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Arma 1</Text>
+            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Arma 2</Text>
             <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
               Resultado
             </Text>
@@ -296,23 +292,31 @@ const HomeScreen = ({
           {lastMatches.map((m, index) => (
             <View
               key={m.id}
-              style={[globalStyles.HM_tableRow, { backgroundColor: "#1b1b1bff" }]}
+              style={[
+                globalStyles.HM_tableRow,
+                { backgroundColor: "#1b1b1bff" },
+              ]}
             >
               <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
                 {index + 1}
               </Text>
+
               <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
                 {m.fieldName}
               </Text>
+
               <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {m.weapon1}
+                {masterMap[m.weapon1] || m.weapon1}
               </Text>
+
               <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {m.weapon2}
+                {masterMap[m.weapon2] || m.weapon2}
               </Text>
+
               <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {m.result}
+                {masterMap[m.result] || m.result}
               </Text>
+
               <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
                 {m.score}
               </Text>
@@ -321,7 +325,7 @@ const HomeScreen = ({
         </View>
       )}
 
-      {/* BOTÓN FLOTANTE */}
+      {/* ADD BUTTON */}
       <TouchableOpacity
         style={globalStyles.HM_floatingButton}
         onPress={() => navigation.navigate("NewGame")}
@@ -330,6 +334,4 @@ const HomeScreen = ({
       </TouchableOpacity>
     </SafeAreaView>
   );
-};
-
-export default HomeScreen;
+}
