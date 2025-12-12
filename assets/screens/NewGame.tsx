@@ -1,5 +1,4 @@
-// assets/screens/NewGame.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -8,130 +7,86 @@ import {
     SafeAreaView,
     ScrollView,
 } from "react-native";
+
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
 import Toast from "react-native-toast-message";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../App";
+
+import { db } from "@/firebaseConfig";
 import {
     collection,
-    getDocs,
-    query,
-    where,
     addDoc,
     serverTimestamp,
     Timestamp,
-    doc,
     getDoc,
+    doc,
 } from "firebase/firestore";
-import { db } from "@/firebaseConfig";
 import { getAuth } from "firebase/auth";
-import { globalStyles } from "../components/globalStyles";
 
-type Option = { label: string; value: string };
+import { Ionicons } from "@expo/vector-icons";
+
+import { globalStyles } from "../components/globalStyles";
+import { useMaster } from "../hooks/useMaster";
+import { useFields } from "../hooks/useFields";
+import FieldSelectorModal from "../components/FieldSelectorModal";
 
 export default function NewGame({
     navigation,
     route,
 }: NativeStackScreenProps<RootStackParamList, "NewGame">) {
+
+    // ============================
+    // MASTER DATA (modos, armas, resultados)
+    // ============================
+    const master = useMaster();
+
+    // ============================
+    // CAMPOS PERSONALIZADOS
+    // ============================
+    const { fields, loading: fieldsLoading, addField } = useFields();
+    const [modalOpen, setModalOpen] = useState(false);
+
+    // Campo preseleccionado (desde el mapa)
     const preselectedField = route?.params?.fieldName ?? "";
     const [fieldName, setFieldName] = useState(preselectedField);
     const fieldLocked = preselectedField !== "";
 
+    // ============================
+    // DATE
+    // ============================
     const [day, setDay] = useState(1);
     const [month, setMonth] = useState(1);
     const [year, setYear] = useState(2025);
+
+    // ============================
+    // GAME STATS
+    // ============================
     const [kills, setKills] = useState("");
     const [deaths, setDeaths] = useState("");
 
-    // Dropdown states
+    // ============================
+    // DROPDOWNS
+    // ============================
     const [openMode, setOpenMode] = useState(false);
     const [gameMode, setGameMode] = useState<string | null>(null);
-    const [gameModes, setGameModes] = useState<Option[]>([]);
 
     const [openWeapon1, setOpenWeapon1] = useState(false);
     const [weapon1, setWeapon1] = useState<string | null>(null);
-    const [primaryWeapons, setPrimaryWeapons] = useState<Option[]>([]);
 
     const [openWeapon2, setOpenWeapon2] = useState(false);
     const [weapon2, setWeapon2] = useState<string | null>(null);
-    const [secondaryWeapons, setSecondaryWeapons] = useState<Option[]>([]);
 
     const [openResult, setOpenResult] = useState(false);
     const [selectedResult, setSelectedResult] = useState<string | null>(null);
-    const [results, setResults] = useState<Option[]>([]);
 
-    // Cargar catálogos
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const qMode = query(
-                    collection(db, "master"),
-                    where("master_type", "==", "game_mode")
-                );
-                const snapMode = await getDocs(qMode);
-                setGameModes(
-                    snapMode.docs
-                        .map((d) => ({
-                            label: d.data().name,
-                            value: d.id,
-                        }))
-                        .filter((i) => i.label && i.value)
-                );
-
-                const q1 = query(
-                    collection(db, "master"),
-                    where("master_type", "==", "guns"),
-                    where("value1", "==", "primaryGun")
-                );
-                const snap1 = await getDocs(q1);
-                setPrimaryWeapons(
-                    snap1.docs
-                        .map((d) => ({ label: d.data().name, value: d.id }))
-                        .filter((i) => i.label && i.value)
-                );
-
-                const q2 = query(
-                    collection(db, "master"),
-                    where("master_type", "==", "guns"),
-                    where("value1", "==", "secondaryGun")
-                );
-                const snap2 = await getDocs(q2);
-                setSecondaryWeapons(
-                    snap2.docs
-                        .map((d) => ({ label: d.data().name, value: d.id }))
-                        .filter((i) => i.label && i.value)
-                );
-
-                const qRes = query(
-                    collection(db, "master"),
-                    where("master_type", "==", "results")
-                );
-                const snapRes = await getDocs(qRes);
-                setResults(
-                    snapRes.docs
-                        .map((d) => ({ label: d.data().name, value: d.id }))
-                        .filter((i) => i.label && i.value)
-                );
-            } catch (e) {
-                Toast.show({ type: "error", text1: "Error cargando datos" });
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    // Guardar partida
+    // ============================
+    // SAVE GAME
+    // ============================
     const handleSave = async () => {
-        if (
-            !fieldName ||
-            !kills ||
-            !deaths ||
-            !weapon1 ||
-            !weapon2 ||
-            !gameMode ||
-            !selectedResult
-        ) {
+        if (!fieldName || !kills || !deaths || !weapon1 || !weapon2 || !gameMode || !selectedResult) {
             return Toast.show({
                 type: "error",
                 text1: "Error",
@@ -148,11 +103,12 @@ export default function NewGame({
         }
 
         const userId = getAuth().currentUser?.uid;
-        if (!userId)
+        if (!userId) {
             return Toast.show({
                 type: "error",
                 text1: "Usuario no autenticado",
             });
+        }
 
         try {
             const userDoc = await getDoc(doc(db, "users", userId));
@@ -160,6 +116,7 @@ export default function NewGame({
                 ? userDoc.data().USERNAME || userDoc.data().NAME || null
                 : null;
 
+            // Score API
             const response = await fetch("http://10.0.2.2:3000/calculateScore", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -172,6 +129,7 @@ export default function NewGame({
 
             const { score } = await response.json();
 
+            // Save match
             await addDoc(collection(db, "games"), {
                 uid: userId,
                 username,
@@ -190,110 +148,138 @@ export default function NewGame({
 
             Toast.show({ type: "success", text1: "Partida guardada" });
             navigation.goBack();
+
         } catch (err) {
             Toast.show({ type: "error", text1: "Error al guardar" });
         }
     };
 
+
+    // ============================
+    // UI
+    // ============================
     return (
         <SafeAreaView style={globalStyles.NW_container}>
             <ScrollView>
 
                 <Text style={globalStyles.NW_title}>Nueva Partida</Text>
 
+                {/* FIELD NAME + BUTTON POPUP */}
                 <Text style={globalStyles.NW_label}>Campo de juego</Text>
-                <TextInput
-                    style={[
-                        globalStyles.NW_input,
-                        fieldLocked && { opacity: 0.5 },
-                    ]}
-                    placeholder="Nombre del campo"
-                    placeholderTextColor="#888888"
-                    editable={!fieldLocked}
-                    value={fieldName}
-                    onChangeText={setFieldName}
+
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <TextInput
+                        style={[globalStyles.NW_input, { flex: 1 }, fieldLocked && { opacity: 0.5 }]}
+                        placeholder="Nombre del campo"
+                        placeholderTextColor="#888"
+                        editable={!fieldLocked}
+                        value={fieldName}
+                        onChangeText={setFieldName}
+                    />
+
+                    {/* botón popup */}
+                    {!fieldLocked && (
+                        <TouchableOpacity
+                            onPress={() => setModalOpen(true)}
+                            style={{ marginLeft: 10 }}
+                        >
+                            <Ionicons name="list" size={30} color="#FF8800" />
+                        </TouchableOpacity>
+                    )}
+                </View>
+
+                {/* MODAL SELECTOR */}
+                <FieldSelectorModal
+                    visible={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    fields={fields}
+                    onSelect={(name) => setFieldName(name)}
+                    onCreate={async (name) => {
+                        const newField = await addField(name);
+                        if (newField) setFieldName(newField.name);
+                    }}
                 />
 
+                {/* FECHA */}
                 <Text style={globalStyles.NW_label}>Fecha</Text>
                 <View style={globalStyles.NW_pickerRow}>
-                    <Picker
-                        selectedValue={day}
-                        onValueChange={setDay}
-                        style={globalStyles.NW_picker}
-                    >
+
+                    <Picker selectedValue={day} onValueChange={setDay} style={globalStyles.NW_picker}>
                         {Array.from({ length: 31 }, (_, i) => (
                             <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
                         ))}
                     </Picker>
 
-                    <Picker
-                        selectedValue={month}
-                        onValueChange={setMonth}
-                        style={globalStyles.NW_picker}
-                    >
+                    <Picker selectedValue={month} onValueChange={setMonth} style={globalStyles.NW_picker}>
                         {Array.from({ length: 12 }, (_, i) => (
                             <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
                         ))}
                     </Picker>
 
-                    <Picker
-                        selectedValue={year}
-                        onValueChange={setYear}
-                        style={globalStyles.NW_picker}
-                    >
+                    <Picker selectedValue={year} onValueChange={setYear} style={globalStyles.NW_picker}>
                         {Array.from({ length: 5 }, (_, i) => (
                             <Picker.Item key={i} label={`${2025 - i}`} value={2025 - i} />
                         ))}
                     </Picker>
+
                 </View>
 
-                {/* GAME MODE */}
+                {/* MODO */}
                 <Text style={globalStyles.NW_label}>Modo de juego</Text>
                 <DropDownPicker
                     open={openMode}
                     value={gameMode}
-                    items={gameModes}
+                    items={Object.entries(master.gameModes).map(([id, name]) => ({
+                        label: name,
+                        value: id,
+                    }))}
                     setOpen={setOpenMode}
                     setValue={setGameMode}
-                    setItems={setGameModes}
+                    setItems={() => { }}
                     style={globalStyles.NW_dropdown}
                     dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                    textStyle={{ color: "#888888", fontFamily: "Michroma" }}
                     placeholder="Selecciona un modo"
+                    textStyle={{ color: "#ccc", fontFamily: "Michroma" }}
                     listMode="SCROLLVIEW"
                     zIndex={3000}
                 />
 
-                {/* PRIMARY WEAPON */}
+                {/* ARMA PRINCIPAL */}
                 <Text style={globalStyles.NW_label}>Arma principal</Text>
                 <DropDownPicker
                     open={openWeapon1}
                     value={weapon1}
-                    items={primaryWeapons}
+                    items={Object.entries(master.primaryGuns).map(([id, name]) => ({
+                        label: name,
+                        value: id,
+                    }))}
                     setOpen={setOpenWeapon1}
                     setValue={setWeapon1}
-                    setItems={setPrimaryWeapons}
+                    setItems={() => { }}
                     style={globalStyles.NW_dropdown}
                     dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                    textStyle={{ color: "#888888", fontFamily: "Michroma" }}
                     placeholder="Selecciona un arma"
+                    textStyle={{ color: "#ccc", fontFamily: "Michroma" }}
                     listMode="SCROLLVIEW"
                     zIndex={2500}
                 />
 
-                {/* SECONDARY */}
+                {/* ARMA SECUNDARIA */}
                 <Text style={globalStyles.NW_label}>Arma secundaria</Text>
                 <DropDownPicker
                     open={openWeapon2}
                     value={weapon2}
-                    items={secondaryWeapons}
+                    items={Object.entries(master.secondaryGuns).map(([id, name]) => ({
+                        label: name,
+                        value: id,
+                    }))}
                     setOpen={setOpenWeapon2}
                     setValue={setWeapon2}
-                    setItems={setSecondaryWeapons}
+                    setItems={() => { }}
                     style={globalStyles.NW_dropdown}
                     dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                    textStyle={{ color: "#888888", fontFamily: "Michroma" }}
                     placeholder="Selecciona un arma"
+                    textStyle={{ color: "#ccc", fontFamily: "Michroma" }}
                     listMode="SCROLLVIEW"
                     zIndex={2000}
                 />
@@ -306,7 +292,7 @@ export default function NewGame({
                             style={globalStyles.NW_numberInput}
                             keyboardType="numeric"
                             placeholder="0"
-                            placeholderTextColor="#aaa"
+                            placeholderTextColor="#888"
                             value={kills}
                             onChangeText={setKills}
                         />
@@ -318,37 +304,43 @@ export default function NewGame({
                             style={globalStyles.NW_numberInput}
                             keyboardType="numeric"
                             placeholder="0"
-                            placeholderTextColor="#aaa"
+                            placeholderTextColor="#888"
                             value={deaths}
                             onChangeText={setDeaths}
                         />
                     </View>
                 </View>
 
-                {/* RESULT */}
+                {/* RESULTADO */}
                 <Text style={globalStyles.NW_label}>Resultado</Text>
                 <DropDownPicker
                     open={openResult}
                     value={selectedResult}
-                    items={results}
+                    items={Object.entries(master.results).map(([id, name]) => ({
+                        label: name,
+                        value: id,
+                    }))}
                     setOpen={setOpenResult}
                     setValue={setSelectedResult}
-                    setItems={setResults}
+                    setItems={() => { }}
                     style={globalStyles.NW_dropdown}
                     dropDownContainerStyle={globalStyles.NW_dropdownContainer}
-                    textStyle={{ color: "#888888", fontFamily: "Michroma" }}
                     placeholder="Selecciona un resultado"
+                    textStyle={{ color: "#ccc", fontFamily: "Michroma" }}
                     listMode="SCROLLVIEW"
                     zIndex={1500}
                 />
 
-                {/* Save */}
+                {/* SAVE */}
                 <TouchableOpacity
                     style={globalStyles.NW_primaryButton}
                     onPress={handleSave}
                 >
-                    <Text style={globalStyles.NW_primaryButtonText}>Guardar Partida</Text>
+                    <Text style={globalStyles.NW_primaryButtonText}>
+                        Guardar Partida
+                    </Text>
                 </TouchableOpacity>
+
             </ScrollView>
         </SafeAreaView>
     );

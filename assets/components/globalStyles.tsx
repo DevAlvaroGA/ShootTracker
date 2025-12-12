@@ -511,6 +511,62 @@ export const globalStyles = StyleSheet.create({
         alignItems: "flex-end",
         flex: 1,
     },
+
+    HM_recentScroll: {
+        maxHeight: 360,
+        marginTop: 10,
+        paddingRight: 6,
+    },
+
+    HM_recentCard: {
+        backgroundColor: "#111",
+        borderRadius: 12,
+        padding: 12,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: "#333",
+    },
+
+    HM_recentHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 4,
+    },
+
+    HM_recentDate: {
+        color: "#FFA500",
+        fontFamily: "Michroma",
+        fontSize: 12,
+    },
+
+    HM_recentField: {
+        color: "#fff",
+        fontFamily: "Michroma",
+        fontSize: 12,
+        flexShrink: 1,
+        textAlign: "right",
+    },
+
+    HM_recentInfo: {
+        color: "#ccc",
+        fontFamily: "Michroma",
+        fontSize: 11,
+        marginTop: 3,
+    },
+
+    HM_recentFooter: {
+        marginTop: 8,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+
+    HM_recentResult: {
+        fontFamily: "Michroma",
+        fontSize: 12,
+    },
+
+
     // NEW GAME
     NW_container: {
         flex: 1,
@@ -607,19 +663,91 @@ export const globalStyles = StyleSheet.create({
 
     NW_primaryButton: {
         backgroundColor: "#FF8800",
-        paddingVertical: 12,
+        paddingVertical: 10,
         borderRadius: 10,
-        marginTop: 20,
+        marginTop: 10,
     },
 
     NW_primaryButtonText: {
         textAlign: "center",
         fontFamily: "Michroma",
         color: "#000",
-        fontSize: 16,
-        fontWeight: "bold",
+        fontSize: 18,
     },
 
+    //---------------- FIELD SELECTOR MODAL ----------------
+    MODAL_overlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.7)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    MODAL_card: {
+        width: "85%",
+        backgroundColor: "#111",
+        borderRadius: 12,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: "#FF8800",
+    },
+
+    MODAL_title: {
+        fontFamily: "Michroma",
+        fontSize: 20,
+        color: "#FF8800",
+        marginBottom: 15,
+        textAlign: "center",
+    },
+
+    MODAL_item: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderColor: "#333",
+    },
+
+    MODAL_itemText: {
+        fontFamily: "Michroma",
+        color: "#fff",
+    },
+
+    MODAL_subtitle: {
+        color: "#FF8800",
+        fontFamily: "Michroma",
+        marginTop: 20,
+        marginBottom: 8,
+    },
+
+    MODAL_input: {
+        backgroundColor: "#000",
+        borderWidth: 1,
+        borderColor: "#FF8800",
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        color: "#fff",
+        fontFamily: "Michroma",
+    },
+
+    MODAL_button: {
+        backgroundColor: "#FF8800",
+        marginTop: 12,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+
+    MODAL_buttonText: {
+        textAlign: "center",
+        color: "#000",
+        fontFamily: "Michroma",
+    },
+
+    MODAL_closeText: {
+        color: "#888",
+        marginTop: 15,
+        textAlign: "center",
+        fontFamily: "Michroma",
+    },
 
     //---------------- EXTRAS ----------------
     floatingButton: {
@@ -820,20 +948,23 @@ export const globalStyles = StyleSheet.create({
         color: "#FFA500",
         fontFamily: "Michroma",
         fontSize: 22,
-        marginBottom: 14,
+        marginBottom: 8,
         textAlign: "center",
     },
 
     PRF_usernameInput: {
-        color: "#FFA500",
+        backgroundColor: "#121212",
+        borderWidth: 1,
+        borderColor: "#FF8800",
+        borderRadius: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        color: "#fff",
         fontFamily: "Michroma",
-        fontSize: 22,
-        borderBottomWidth: 1,
-        borderColor: "#FFA500",
-        paddingVertical: 6,
-        width: 240,
+        fontSize: 18,
+        width: 260,
         textAlign: "center",
-        marginBottom: 16,
+        marginBottom: 12,
     },
 
     PRF_editButton: {
@@ -853,78 +984,91 @@ export const globalStyles = StyleSheet.create({
     // ---------- INFO CARD ----------
 
     PRF_infoCard: {
-        backgroundColor: "#111",
-        borderRadius: 12,
-        padding: 15,
-        marginTop: 20,
+        backgroundColor: "#0f0f0f",
+        borderRadius: 14,
+        padding: 14,
+        marginTop: 18,
         borderWidth: 1,
-        borderColor: "#333",
+        borderColor: "#222",
+        overflow: "visible",
+        position: "relative",   // <- Añadido
     },
 
     PRF_infoLabel: {
         color: "#FFA500",
         fontFamily: "Michroma",
-        fontSize: 14,
-        marginTop: 12,
+        fontSize: 13,
+        marginTop: 10,
     },
 
     PRF_infoValue: {
         color: "#fff",
         fontFamily: "Michroma",
         fontSize: 13,
-        marginTop: 4,
+        marginTop: 6,
     },
 
     PRF_bioInput: {
-        backgroundColor: "#222",
-        color: "#fff",
-        padding: 12,
-        borderRadius: 8,
-        marginTop: 5,
-        minHeight: 80,
-        textAlignVertical: "top",
-        fontFamily: "Michroma",
-    },
-
-    // ---------- PICKERS ----------
-
-    PRF_pickerWrapper: {
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "#121212",
         borderWidth: 1,
-        borderColor: "#444",
-        borderRadius: 8,
-        marginTop: 6,
-        height: 50,
-        justifyContent: "center",
-    },
-
-    PRF_picker: {
-        color: "#FFA500",
+        borderColor: "#FF8800",
+        borderRadius: 10,
+        padding: 12,
+        color: "#fff",
         fontFamily: "Michroma",
-        width: "100%",
-        height: 50,
-        paddingLeft: 8,
+        minHeight: 100,
+        marginTop: 6,
+        textAlignVertical: "top",
     },
 
-    // Para DropDownPicker (modo favorito)
+    // ---------- PICKERS & DROPDOWNS ----------
+
+    PRF_dropdownWrapper: {
+        marginTop: 6,
+        zIndex: 1,
+        elevation: 1,
+        position: "relative",   // <- Añadido
+    },
+
     PRF_dropdown: {
-        backgroundColor: "#1a1a1a",
-        borderColor: "#444",
-        height: 50,
+        backgroundColor: "#111",
+        borderColor: "#FF8800",
+        height: 48,
     },
 
     PRF_dropdownContainer: {
-        backgroundColor: "#1a1a1a",
-        borderColor: "#444",
+        backgroundColor: "#111",
+        borderColor: "#FF8800",
+        position: "absolute",   // <- Añadido
+    },
+
+    // zIndex por orden superior → inferior
+    PRF_zLang: {
+        zIndex: 4000,
+        elevation: 4000,
+    },
+
+    PRF_zPrimary: {
+        zIndex: 3500,
+        elevation: 3500,
+    },
+
+    PRF_zSecondary: {
+        zIndex: 3000,
+        elevation: 3000,
+    },
+
+    PRF_zMode: {
+        zIndex: 2500,
+        elevation: 2500,
     },
 
     // ---------- STATS CARD ----------
-
     PRF_statsCard: {
         backgroundColor: "#111",
         borderRadius: 12,
         padding: 15,
-        marginTop: 20,
+        marginTop: 18,
         borderWidth: 1,
         borderColor: "#333",
     },
@@ -936,8 +1080,7 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 8,
     },
 
-    // ---------- SAVE / CANCEL ----------
-
+    // ---------- BUTTONS ----------
     PRF_buttonsRow: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -974,6 +1117,23 @@ export const globalStyles = StyleSheet.create({
         fontSize: 15,
         color: "#fff",
     },
+
+    // ---------- CHANGE PICTURE BUTTON ----------
+    PRF_changePicButton: {
+        marginVertical: 8,
+        backgroundColor: "#FFA500",
+        paddingHorizontal: 16,
+        paddingVertical: 6,
+        borderRadius: 10,
+    },
+
+    PRF_changePicButtonText: {
+        fontFamily: "Michroma",
+        fontSize: 12,
+        color: "#000",
+    },
+
+
 
     // ---------------- VERIFY EMAIL SCREEN ----------------
     verify_container: {

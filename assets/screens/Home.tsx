@@ -8,6 +8,8 @@ import {
   Image,
   Dimensions,
   Animated,
+  ScrollView,
+  BackHandler
 } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -23,15 +25,14 @@ import {
   orderBy,
   limit,
   onSnapshot,
-  getDocs,
-  Timestamp,
+  Timestamp
 } from "firebase/firestore";
 
 import { LineChart } from "react-native-chart-kit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
+import { useMaster } from "../hooks/useMaster";
 import type { RootStackParamList } from "../../App";
 
 type Match = {
@@ -43,30 +44,29 @@ type Match = {
   fieldName: string;
   score: number;
   result: string;
-  createdAt: Timestamp;
+  gameMode: string;
+  matchDate: Timestamp;
 };
 
 export default function HomeScreen({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, "Home">) {
-  const [lastMatches, setLastMatches] = useState<Match[]>([]);
-  const [masterMap, setMasterMap] = useState<{ [key: string]: string }>({});
 
-  // MENU
+  const [lastMatches, setLastMatches] = useState<Match[]>([]);
+  const master = useMaster();
+
+  // ----------------- MENÚ -----------------
   const [menuOpen, setMenuOpen] = useState(false);
   const slideAnim = useState(new Animated.Value(-250))[0];
 
-  // Block back
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => true;
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [])
   );
 
-  // Auth session
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
       if (!user) navigation.replace("Login");
@@ -74,22 +74,7 @@ export default function HomeScreen({
     return unsub;
   }, []);
 
-  // Load master catalog → dictionary
-  useEffect(() => {
-    const loadMaster = async () => {
-      const snap = await getDocs(collection(db, "master"));
-      const map: any = {};
-      snap.docs.forEach((doc) => {
-        const data = doc.data();
-        if (data.name) map[doc.id] = data.name;
-      });
-      setMasterMap(map);
-    };
-
-    loadMaster();
-  }, []);
-
-  // Load last matches
+  // ----------------- CARGAR ÚLTIMAS PARTIDAS -----------------
   useEffect(() => {
     const uid = auth.currentUser?.uid;
     if (!uid) return;
@@ -102,16 +87,20 @@ export default function HomeScreen({
       limit(5)
     );
 
-    const unsub = onSnapshot(q, (snap) => {
-      const arr = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Match[];
-      setLastMatches(arr.reverse());
+    const unsub = onSnapshot(q, (snapshot) => {
+      const data: Match[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Match[];
+
+      setLastMatches(data.reverse());
     });
 
     return unsub;
   }, []);
 
-  const chartLabels = lastMatches.map((_, i) => `Partida ${i + 1}`);
   const screenWidth = Dimensions.get("window").width - 20;
+  const chartLabels = lastMatches.map((_, i) => `Partida ${i + 1}`);
 
   const toggleMenu = () => {
     if (menuOpen) {
@@ -135,16 +124,18 @@ export default function HomeScreen({
     navigation.navigate(screen as any);
   };
 
+  // ----------------- LOGOUT -----------------
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
       await signOut(auth);
       navigation.replace("Login");
-    } catch (err) {
-      console.log("Logout error:", err);
+    } catch (error) {
+      console.log("Error al cerrar sesión:", error);
     }
   };
 
+  // ----------------- UI -----------------
   return (
     <SafeAreaView
       style={[
@@ -182,7 +173,7 @@ export default function HomeScreen({
         />
       )}
 
-      {/* SIDE MENU */}
+      {/* MENÚ LATERAL */}
       <Animated.View
         style={[globalStyles.HM_menuContainer, { left: slideAnim }]}
       >
@@ -191,40 +182,33 @@ export default function HomeScreen({
           style={globalStyles.HM_menuProfile}
         />
 
-        <TouchableOpacity
-          style={globalStyles.HM_menuItem}
-          onPress={() => navigateTo("Profile")}
-        >
+        <TouchableOpacity style={globalStyles.HM_menuItem} onPress={() => navigateTo("Profile")}>
           <Ionicons name="person-outline" size={24} color="#ff8800" />
           <Text style={globalStyles.HM_menuText}>Perfil</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={globalStyles.HM_menuItem}
-          onPress={() => navigateTo("History")}
-        >
+        <TouchableOpacity style={globalStyles.HM_menuItem} onPress={() => navigateTo("NewGame")}>
+          <Ionicons name="add-circle-outline" size={24} color="#ff8800" />
+          <Text style={globalStyles.HM_menuText}>Nueva Partida</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={globalStyles.HM_menuItem} onPress={() => navigateTo("History")}>
           <Ionicons name="document-text-outline" size={24} color="#ff8800" />
           <Text style={globalStyles.HM_menuText}>Historial</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={globalStyles.HM_menuItem}
-          onPress={() => navigateTo("Map")}
-        >
+        <TouchableOpacity style={globalStyles.HM_menuItem} onPress={() => navigateTo("Map")}>
           <Ionicons name="map-outline" size={24} color="#ff8800" />
           <Text style={globalStyles.HM_menuText}>Mapa</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={globalStyles.HM_menuItem}
-          onPress={handleLogout}
-        >
+        <TouchableOpacity style={globalStyles.HM_menuItem} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={24} color="#ff8800" />
           <Text style={globalStyles.HM_menuText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </Animated.View>
 
-      {/* STATS */}
+      {/* ESTADÍSTICAS */}
       <Text style={globalStyles.HM_title}>Estadísticas Recientes</Text>
 
       {lastMatches.length > 0 ? (
@@ -232,106 +216,81 @@ export default function HomeScreen({
           data={{
             labels: chartLabels,
             datasets: [
-              {
-                data: lastMatches.map((m) => m.kills),
-                color: () => "#FF8800",
-                strokeWidth: 3,
-              },
-              {
-                data: lastMatches.map((m) => m.deaths),
-                color: () => "#ff0000",
-                strokeWidth: 3,
-              },
+              { data: lastMatches.map((m) => m.kills), color: () => "#FF8800", strokeWidth: 3 },
+              { data: lastMatches.map((m) => m.deaths), color: () => "#ff0000", strokeWidth: 3 },
             ],
-            legend: ["Kills", "Bajas"],
+            legend: ["Kills", "Muertes"],
           }}
           width={screenWidth}
           height={220}
           chartConfig={{
-            backgroundGradientFrom: "#1b1b1bff",
+            backgroundGradientFrom: "#1b1b1b",
             backgroundGradientTo: "#1a1a1a",
             decimalPlaces: 0,
             color: () => "#fff",
             labelColor: () => "#fff",
-            style: {
-              borderRadius: 16,
-              borderWidth: 1,
-              borderColor: "#FFA500",
-            },
-            propsForDots: {
-              r: "4",
-              strokeWidth: "2",
-              stroke: "#fff",
-            },
+            style: { borderRadius: 16, borderWidth: 1, borderColor: "#FFA500" },
+            propsForDots: { r: "4", strokeWidth: "2", stroke: "#fff" },
           }}
           bezier
           style={globalStyles.HM_chart}
         />
       ) : (
-        <Text style={globalStyles.HM_noData}>
-          Añade partidas para ver tus estadísticas.
-        </Text>
+        <Text style={globalStyles.HM_noData}>Añade partidas para ver tus estadísticas.</Text>
       )}
 
-      {/* TABLE */}
-      <Text style={globalStyles.HM_subtitle}>Historial de Partidas</Text>
+      {/* HISTORIAL RECIENTE */}
+      <Text style={globalStyles.HM_subtitle}>Historial reciente</Text>
 
-      {lastMatches.length > 0 && (
-        <View style={globalStyles.HM_table}>
-          <View style={[globalStyles.HM_tableRow, globalStyles.HM_tableHeader]}>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Partida</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Campo</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Arma 1</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Arma 2</Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-              Resultado
-            </Text>
-            <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>Puntos</Text>
-          </View>
+      {lastMatches.length === 0 ? (
+        <Text style={globalStyles.HM_noData}>No hay partidas todavía.</Text>
+      ) : (
+        <ScrollView style={globalStyles.HM_recentScroll}>
+          {lastMatches.map((m) => (
+            <View key={m.id} style={globalStyles.HM_recentCard}>
 
-          {lastMatches.map((m, index) => (
-            <View
-              key={m.id}
-              style={[
-                globalStyles.HM_tableRow,
-                { backgroundColor: "#1b1b1bff" },
-              ]}
-            >
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {index + 1}
+              {/* HEADER */}
+              <View style={globalStyles.HM_recentHeader}>
+                <Text style={globalStyles.HM_recentDate}>
+                  {m.matchDate?.toDate().toLocaleDateString("es-ES")}
+                </Text>
+                <Text style={globalStyles.HM_recentField}>{m.fieldName}</Text>
+              </View>
+
+              <Text style={globalStyles.HM_recentInfo}>
+                Modo: {master.getName(m.gameMode)}
               </Text>
 
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {m.fieldName}
+              <Text style={globalStyles.HM_recentInfo}>
+                Armas: {master.getName(m.weapon1)} • {master.getName(m.weapon2)}
               </Text>
 
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {masterMap[m.weapon1] || m.weapon1}
+              <Text style={globalStyles.HM_recentInfo}>
+                Kills: {m.kills} ‣ Muertes: {m.deaths}
               </Text>
 
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {masterMap[m.weapon2] || m.weapon2}
-              </Text>
+              <View style={globalStyles.HM_recentFooter}>
+                <Text
+                  style={[
+                    globalStyles.HM_recentResult,
+                    master.getName(m.result) === "Victoria"
+                      ? { color: "#4CAF50" }
+                      : { color: "#FF5252" },
+                  ]}
+                >
+                  {master.getName(m.result)}
+                </Text>
 
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {masterMap[m.result] || m.result}
-              </Text>
+                <Text style={{ color: "#FFA500", fontFamily: "Michroma" }}>
+                  Puntos: {m.score}
+                </Text>
+              </View>
 
-              <Text style={[globalStyles.HM_tableCell, { flex: 1 }]}>
-                {m.score}
-              </Text>
             </View>
           ))}
-        </View>
+        </ScrollView>
       )}
 
-      {/* ADD BUTTON */}
-      <TouchableOpacity
-        style={globalStyles.HM_floatingButton}
-        onPress={() => navigation.navigate("NewGame")}
-      >
-        <Ionicons name="add" size={32} color="white" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
