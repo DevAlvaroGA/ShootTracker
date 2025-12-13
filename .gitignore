@@ -34,3 +34,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# 🔐 Firebase / Secrets
+serviceAccountKey.json
+**/serviceAccountKey.json
+assets/migrated/serviceAccountKey.json
+
