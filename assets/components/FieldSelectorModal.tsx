@@ -1,33 +1,43 @@
+// assets/components/FieldSelectorModal.tsx
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, ScrollView, TextInput } from "react-native";
 import { globalStyles } from "../components/globalStyles";
 
+type FieldItem = {
+    id: string;
+    name: string;
+};
+
 type Props = {
     visible: boolean;
     onClose: () => void;
-    fields: { id: string; name: string }[];
-    onSelect: (name: string) => void;
+    fields: FieldItem[];
+    onSelect: (field: FieldItem) => void;   // ⚠️ cambio
     onCreate: (name: string) => void;
 };
 
-export default function FieldSelectorModal({ visible, onClose, fields, onSelect, onCreate }: Props) {
+export default function FieldSelectorModal({
+    visible,
+    onClose,
+    fields,
+    onSelect,
+    onCreate,
+}: Props) {
     const [newField, setNewField] = useState("");
 
     return (
         <Modal transparent visible={visible} animationType="fade">
             <View style={globalStyles.MODAL_overlay}>
-
                 <View style={globalStyles.MODAL_card}>
                     <Text style={globalStyles.MODAL_title}>Seleccionar campo</Text>
 
-                    {/* Lista scrollable */}
                     <ScrollView style={{ maxHeight: 250 }}>
                         {fields.map((f) => (
                             <TouchableOpacity
                                 key={f.id}
                                 style={globalStyles.MODAL_item}
                                 onPress={() => {
-                                    onSelect(f.name);
+                                    onSelect(f);   // ⚠️ cambio
                                     onClose();
                                 }}
                             >
@@ -36,7 +46,6 @@ export default function FieldSelectorModal({ visible, onClose, fields, onSelect,
                         ))}
                     </ScrollView>
 
-                    {/* Crear nuevo campo */}
                     <Text style={globalStyles.MODAL_subtitle}>Añadir campo nuevo</Text>
                     <TextInput
                         placeholder="Nombre del campo"

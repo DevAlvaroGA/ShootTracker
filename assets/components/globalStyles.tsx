@@ -1033,6 +1033,7 @@ export const globalStyles = StyleSheet.create({
     PRF_dropdown: {
         backgroundColor: "#111",
         borderColor: "#FF8800",
+        fontFamily: "Michroma",
         height: 48,
     },
 

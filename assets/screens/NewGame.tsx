@@ -1,3 +1,4 @@
+// assets/screens/NewGame.tsx
 import React, { useState } from "react";
 import {
     View,
@@ -39,18 +40,19 @@ export default function NewGame({
 }: NativeStackScreenProps<RootStackParamList, "NewGame">) {
 
     // ============================
-    // MASTER DATA (modos, armas, resultados)
+    // MASTER DATA
     // ============================
     const master = useMaster();
 
     // ============================
-    // CAMPOS PERSONALIZADOS
+    // CAMPOS
     // ============================
-    const { fields, loading: fieldsLoading, addField } = useFields();
+    const { fields, addField } = useFields();
     const [modalOpen, setModalOpen] = useState(false);
 
-    // Campo preseleccionado (desde el mapa)
+    // ⚠️ CAMBIO REAL: guardamos ID + nombre
     const preselectedField = route?.params?.fieldName ?? "";
+    const [fieldId, setFieldId] = useState<string | null>(null);
     const [fieldName, setFieldName] = useState(preselectedField);
     const fieldLocked = preselectedField !== "";
 
@@ -86,7 +88,15 @@ export default function NewGame({
     // SAVE GAME
     // ============================
     const handleSave = async () => {
-        if (!fieldName || !kills || !deaths || !weapon1 || !weapon2 || !gameMode || !selectedResult) {
+        if (
+            !fieldName ||
+            !kills ||
+            !deaths ||
+            !weapon1 ||
+            !weapon2 ||
+            !gameMode ||
+            !selectedResult
+        ) {
             return Toast.show({
                 type: "error",
                 text1: "Error",
@@ -116,7 +126,6 @@ export default function NewGame({
                 ? userDoc.data().USERNAME || userDoc.data().NAME || null
                 : null;
 
-            // Score API
             const response = await fetch("http://10.0.2.2:3000/calculateScore", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -129,11 +138,13 @@ export default function NewGame({
 
             const { score } = await response.json();
 
-            // Save match
             await addDoc(collection(db, "games"), {
                 uid: userId,
                 username,
-                fieldName,
+
+                fieldId,      // ✅ NUEVO (clave para historial)
+                fieldName,    // 🔹 legacy / fallback
+
                 gameMode,
                 weapon1,
                 weapon2,
@@ -149,14 +160,13 @@ export default function NewGame({
             Toast.show({ type: "success", text1: "Partida guardada" });
             navigation.goBack();
 
-        } catch (err) {
+        } catch {
             Toast.show({ type: "error", text1: "Error al guardar" });
         }
     };
 
-
     // ============================
-    // UI
+    // UI (RESTAURADA COMPLETA)
     // ============================
     return (
         <SafeAreaView style={globalStyles.NW_container}>
@@ -164,9 +174,8 @@ export default function NewGame({
 
                 <Text style={globalStyles.NW_title}>Nueva Partida</Text>
 
-                {/* FIELD NAME + BUTTON POPUP */}
+                {/* CAMPO */}
                 <Text style={globalStyles.NW_label}>Campo de juego</Text>
-
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TextInput
                         style={[globalStyles.NW_input, { flex: 1 }, fieldLocked && { opacity: 0.5 }]}
@@ -177,7 +186,6 @@ export default function NewGame({
                         onChangeText={setFieldName}
                     />
 
-                    {/* botón popup */}
                     {!fieldLocked && (
                         <TouchableOpacity
                             onPress={() => setModalOpen(true)}
@@ -188,22 +196,26 @@ export default function NewGame({
                     )}
                 </View>
 
-                {/* MODAL SELECTOR */}
                 <FieldSelectorModal
                     visible={modalOpen}
                     onClose={() => setModalOpen(false)}
                     fields={fields}
-                    onSelect={(name) => setFieldName(name)}
+                    onSelect={(field) => {
+                        setFieldId(field.id);
+                        setFieldName(field.name);
+                    }}
                     onCreate={async (name) => {
                         const newField = await addField(name);
-                        if (newField) setFieldName(newField.name);
+                        if (newField) {
+                            setFieldId(newField.id);
+                            setFieldName(newField.name);
+                        }
                     }}
                 />
 
                 {/* FECHA */}
                 <Text style={globalStyles.NW_label}>Fecha</Text>
                 <View style={globalStyles.NW_pickerRow}>
-
                     <Picker selectedValue={day} onValueChange={setDay} style={globalStyles.NW_picker}>
                         {Array.from({ length: 31 }, (_, i) => (
                             <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
@@ -221,7 +233,6 @@ export default function NewGame({
                             <Picker.Item key={i} label={`${2025 - i}`} value={2025 - i} />
                         ))}
                     </Picker>
-
                 </View>
 
                 {/* MODO */}
@@ -291,7 +302,7 @@ export default function NewGame({
                         <TextInput
                             style={globalStyles.NW_numberInput}
                             keyboardType="numeric"
-                            placeholder="0"
+                            placeholder="-"
                             placeholderTextColor="#888"
                             value={kills}
                             onChangeText={setKills}
@@ -303,7 +314,7 @@ export default function NewGame({
                         <TextInput
                             style={globalStyles.NW_numberInput}
                             keyboardType="numeric"
-                            placeholder="0"
+                            placeholder="-"
                             placeholderTextColor="#888"
                             value={deaths}
                             onChangeText={setDeaths}

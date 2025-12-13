@@ -23,7 +23,6 @@ import {
     doc,
     getDoc,
     getDocs,
-    updateDoc,
     query,
     where,
     setDoc,
@@ -38,7 +37,7 @@ export default function ProfileScreen() {
     const [editing, setEditing] = useState(false);
 
     const [username, setUsername] = useState("");
-    const [language, setLanguage] = useState("es");
+    const [language, setLanguage] = useState<string | null>(null);
     const [bio, setBio] = useState("");
     const BIO_LIMIT = 200;
 
@@ -49,6 +48,7 @@ export default function ProfileScreen() {
     const [totalPoints, setTotalPoints] = useState(0);
     const [victories, setVictories] = useState(0);
     const [matchesPlayed, setMatchesPlayed] = useState(0);
+    const [winRate, setWinRate] = useState(0);
 
     const [profilePic, setProfilePic] = useState<string | null>(null);
 
@@ -61,23 +61,13 @@ export default function ProfileScreen() {
     const master = useMaster();
     const defaultProfile = require("../images/default_profile.png");
 
-    // ---------- VALIDACIÓN ----------
-    const isUsernameTaken = async (name: string) => {
-        const qName = query(collection(db, "users"), where("USERNAME", "==", name));
-        const snap = await getDocs(qName);
-        return snap.docs.some((d) => d.id !== uid);
-    };
-
     // ---------- LOAD DATA ----------
     useEffect(() => {
         if (!uid) return;
+        if (!Object.keys(master.results).length) return;
 
         const loadEverything = async () => {
             setLoading(true);
-
-            const userSnap = await getDoc(doc(db, "users", uid));
-            const usernameValue = userSnap.exists() ? userSnap.data().USERNAME || "" : "";
-            setUsername(usernameValue);
 
             const profileRef = doc(db, "game_profile", uid);
             const profileSnap = await getDoc(profileRef);
@@ -86,8 +76,8 @@ export default function ProfileScreen() {
                 await setDoc(
                     profileRef,
                     {
-                        USERNAME: usernameValue,
-                        LANGUAGE: "es",
+                        USERNAME: "",
+                        LANGUAGE: null,
                         BIO: "",
                         MAIN_WEAPON: null,
                         SECONDARY_WEAPON: null,
@@ -99,25 +89,27 @@ export default function ProfileScreen() {
                 );
             }
 
-            if (profileSnap.exists()) {
-                const p = profileSnap.data();
-                setLanguage(p.LANGUAGE || "es");
-                setBio(p.BIO || "");
-                setMainWeapon(p.MAIN_WEAPON || null);
-                setSecondaryWeapon(p.SECONDARY_WEAPON || null);
-                setFavoriteMode(p.FAVORITE_MODE || null);
-                setProfilePic(p.PROFILE_PIC_URL || null);
-            }
+            const p = profileSnap.exists() ? profileSnap.data() : {};
+
+            setUsername(p.USERNAME || "");
+            setLanguage(p.LANGUAGE ?? null);
+            setBio(p.BIO || "");
+            setMainWeapon(p.MAIN_WEAPON ?? null);
+            setSecondaryWeapon(p.SECONDARY_WEAPON ?? null);
+            setFavoriteMode(p.FAVORITE_MODE ?? null);
+            setProfilePic(p.PROFILE_PIC_URL ?? null);
 
             await loadStats();
             setLoading(false);
         };
 
         loadEverything();
-    }, []);
+    }, [uid, master.results]);
 
     // ---------- LOAD STATS ----------
     const loadStats = async () => {
+        if (!uid) return;
+
         const qGames = query(
             collection(db, "games"),
             where("uid", "==", uid),
@@ -137,14 +129,18 @@ export default function ProfileScreen() {
             if (resultName === "victoria") wins++;
         });
 
-        setMatchesPlayed(snap.size);
+        const total = snap.size;
+        const rate = total > 0 ? Math.floor((wins / total) * 1000) / 10 : 0;
+
+        setMatchesPlayed(total);
         setVictories(wins);
         setTotalPoints(pts);
+        setWinRate(rate);
     };
 
-    // ---------- IMAGE PICKER & UPLOAD ----------
+    // ---------- IMAGE PICKER ----------
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
+        const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
@@ -176,15 +172,13 @@ export default function ProfileScreen() {
             );
 
             Toast.show({ type: "success", text1: "Foto actualizada" });
-        } catch (e) {
+        } catch {
             Toast.show({ type: "error", text1: "Error al subir la imagen" });
         }
     };
 
     // ---------- SAVE PROFILE ----------
     const saveProfile = async () => {
-        console.log("SAVE PROFILE CALLED");
-
         if (!username.trim()) {
             return Toast.show({
                 type: "error",
@@ -193,32 +187,16 @@ export default function ProfileScreen() {
             });
         }
 
-        if (await isUsernameTaken(username.trim())) {
-            return Toast.show({
-                type: "error",
-                text1: "Nombre no disponible",
-                text2: "Ese nickname ya está en uso.",
-            });
-        }
-
         try {
-            console.log("Updating USERS...");
-            await setDoc(
-                doc(db, "users", uid!),
-                { USERNAME: username.trim() },
-                { merge: true }
-            );
-
-            console.log("Updating GAME_PROFILE...");
             await setDoc(
                 doc(db, "game_profile", uid!),
                 {
                     USERNAME: username.trim(),
                     LANGUAGE: language,
                     BIO: bio,
-                    MAIN_WEAPON: mainWeapon ?? null,
-                    SECONDARY_WEAPON: secondaryWeapon ?? null,
-                    FAVORITE_MODE: favoriteMode ?? null,
+                    MAIN_WEAPON: mainWeapon,
+                    SECONDARY_WEAPON: secondaryWeapon,
+                    FAVORITE_MODE: favoriteMode,
                 },
                 { merge: true }
             );
@@ -226,7 +204,6 @@ export default function ProfileScreen() {
             Toast.show({ type: "success", text1: "Perfil actualizado" });
             setEditing(false);
         } catch (e) {
-            console.log("SAVE ERROR:", e);
             Toast.show({
                 type: "error",
                 text1: "Error al guardar",
@@ -251,7 +228,6 @@ export default function ProfileScreen() {
             enableOnAndroid
             extraScrollHeight={70}
         >
-
             {/* HEADER */}
             <View style={{ alignItems: "center", marginTop: 60 }}>
                 <Image
@@ -264,18 +240,24 @@ export default function ProfileScreen() {
                         style={globalStyles.PRF_changePicButton}
                         onPress={pickImage}
                     >
-                        <Text style={globalStyles.PRF_changePicButtonText}>Cambiar foto</Text>
+                        <Text style={globalStyles.PRF_changePicButtonText}>
+                            Cambiar foto
+                        </Text>
                     </TouchableOpacity>
                 )}
 
                 {editing ? (
                     <TextInput
                         value={username}
+                        placeholder="Introduce tu nickname"
+                        placeholderTextColor="#888"
                         onChangeText={setUsername}
                         style={globalStyles.PRF_usernameInput}
                     />
                 ) : (
-                    <Text style={globalStyles.PRF_username}>{username}</Text>
+                    <Text style={globalStyles.PRF_username}>
+                        {username || "—"}
+                    </Text>
                 )}
 
                 {!editing && (
@@ -283,7 +265,9 @@ export default function ProfileScreen() {
                         style={globalStyles.PRF_editButton}
                         onPress={() => setEditing(true)}
                     >
-                        <Text style={globalStyles.PRF_editButtonText}>Editar perfil</Text>
+                        <Text style={globalStyles.PRF_editButtonText}>
+                            Editar perfil
+                        </Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -291,7 +275,6 @@ export default function ProfileScreen() {
             {/* INFO CARD */}
             <View style={{ zIndex: 9999, position: "relative" }}>
                 <View style={globalStyles.PRF_infoCard}>
-
                     {/* LANGUAGE */}
                     <Text style={globalStyles.PRF_infoLabel}>Idioma</Text>
                     {editing ? (
@@ -313,9 +296,9 @@ export default function ProfileScreen() {
                                 style={globalStyles.PRF_dropdown}
                                 dropDownContainerStyle={[
                                     globalStyles.PRF_dropdownContainer,
-                                    { position: "absolute", top: 48, zIndex: 9999 }
+                                    { position: "absolute", top: 48, zIndex: 9999 },
                                 ]}
-                                placeholder="Selecciona un idioma"
+                                textStyle={{ color: "#fff", fontFamily: "Michroma" }}
                                 listMode="SCROLLVIEW"
                                 zIndex={4000}
                             />
@@ -333,10 +316,9 @@ export default function ProfileScreen() {
                             <DropDownPicker
                                 open={openPrimary}
                                 value={mainWeapon}
-                                items={Object.entries(master.primaryGuns).map(([id, name]) => ({
-                                    label: name,
-                                    value: id,
-                                }))}
+                                items={Object.entries(master.primaryGuns).map(
+                                    ([id, name]) => ({ label: name, value: id })
+                                )}
                                 setOpen={(v) => {
                                     setOpenPrimary(v);
                                     setOpenLang(false);
@@ -347,9 +329,9 @@ export default function ProfileScreen() {
                                 style={globalStyles.PRF_dropdown}
                                 dropDownContainerStyle={[
                                     globalStyles.PRF_dropdownContainer,
-                                    { position: "absolute", top: 48, zIndex: 9999 }
+                                    { position: "absolute", top: 48, zIndex: 9999 },
                                 ]}
-                                placeholder="Selecciona un arma"
+                                textStyle={{ color: "#fff", fontFamily: "Michroma" }}
                                 listMode="SCROLLVIEW"
                                 zIndex={3500}
                             />
@@ -367,10 +349,9 @@ export default function ProfileScreen() {
                             <DropDownPicker
                                 open={openSecondary}
                                 value={secondaryWeapon}
-                                items={Object.entries(master.secondaryGuns).map(([id, name]) => ({
-                                    label: name,
-                                    value: id,
-                                }))}
+                                items={Object.entries(master.secondaryGuns).map(
+                                    ([id, name]) => ({ label: name, value: id })
+                                )}
                                 setOpen={(v) => {
                                     setOpenSecondary(v);
                                     setOpenLang(false);
@@ -381,9 +362,9 @@ export default function ProfileScreen() {
                                 style={globalStyles.PRF_dropdown}
                                 dropDownContainerStyle={[
                                     globalStyles.PRF_dropdownContainer,
-                                    { position: "absolute", top: 48, zIndex: 9999 }
+                                    { position: "absolute", top: 48, zIndex: 9999 },
                                 ]}
-                                placeholder="Selecciona un arma"
+                                textStyle={{ color: "#fff", fontFamily: "Michroma" }}
                                 listMode="SCROLLVIEW"
                                 zIndex={3000}
                             />
@@ -401,10 +382,9 @@ export default function ProfileScreen() {
                             <DropDownPicker
                                 open={openMode}
                                 value={favoriteMode}
-                                items={Object.entries(master.gameModes).map(([id, name]) => ({
-                                    label: name,
-                                    value: id,
-                                }))}
+                                items={Object.entries(master.gameModes).map(
+                                    ([id, name]) => ({ label: name, value: id })
+                                )}
                                 setOpen={(v) => {
                                     setOpenMode(v);
                                     setOpenLang(false);
@@ -415,9 +395,9 @@ export default function ProfileScreen() {
                                 style={globalStyles.PRF_dropdown}
                                 dropDownContainerStyle={[
                                     globalStyles.PRF_dropdownContainer,
-                                    { position: "absolute", top: 48, zIndex: 9999 }
+                                    { position: "absolute", top: 48, zIndex: 9999 },
                                 ]}
-                                placeholder="Selecciona un modo"
+                                textStyle={{ color: "#fff", fontFamily: "Michroma" }}
                                 listMode="SCROLLVIEW"
                                 zIndex={2500}
                             />
@@ -441,9 +421,10 @@ export default function ProfileScreen() {
                             style={globalStyles.PRF_bioInput}
                         />
                     ) : (
-                        <Text style={globalStyles.PRF_infoValue}>{bio || "—"}</Text>
+                        <Text style={globalStyles.PRF_infoValue}>
+                            {bio || "—"}
+                        </Text>
                     )}
-
                 </View>
             </View>
 
@@ -455,6 +436,9 @@ export default function ProfileScreen() {
                     </Text>
                     <Text style={globalStyles.PRF_statsText}>
                         Victorias: {victories}
+                    </Text>
+                    <Text style={globalStyles.PRF_statsText}>
+                        Winrate: {winRate}%
                     </Text>
                     <Text style={globalStyles.PRF_statsText}>
                         Puntos totales: {totalPoints}
@@ -469,18 +453,21 @@ export default function ProfileScreen() {
                         style={globalStyles.PRF_saveButton}
                         onPress={saveProfile}
                     >
-                        <Text style={globalStyles.PRF_saveButtonText}>Guardar</Text>
+                        <Text style={globalStyles.PRF_saveButtonText}>
+                            Guardar
+                        </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         style={globalStyles.PRF_cancelButton}
                         onPress={() => setEditing(false)}
                     >
-                        <Text style={globalStyles.PRF_cancelButtonText}>Cancelar</Text>
+                        <Text style={globalStyles.PRF_cancelButtonText}>
+                            Cancelar
+                        </Text>
                     </TouchableOpacity>
                 </View>
             )}
-
         </KeyboardAwareScrollView>
     );
 }

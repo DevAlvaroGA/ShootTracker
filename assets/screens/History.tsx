@@ -29,7 +29,10 @@ import { useMaster } from "../hooks/useMaster";
 type Match = {
     id: string;
     matchDate?: any;
-    fieldName?: string;
+
+    fieldId?: string;     // Nuevo campo correcto
+    fieldName?: string;   // Legacy para partidas antiguas
+
     gameMode?: string;
     weapon1?: string;
     weapon2?: string;
@@ -65,7 +68,6 @@ export default function HistoryScreen() {
     const [sortColumn, setSortColumn] = useState<keyof Match>("matchDate");
     const [sortDesc, setSortDesc] = useState(true);
 
-    // MASTER DATA (WAY BETTER)
     const master = useMaster();
 
     // ------------------------------
@@ -109,19 +111,16 @@ export default function HistoryScreen() {
             const A = a[sortColumn] as any;
             const B = b[sortColumn] as any;
 
-            // Date sorting
             if (sortColumn === "matchDate") {
                 const tA = A?.seconds ?? 0;
                 const tB = B?.seconds ?? 0;
                 return sortDesc ? tB - tA : tA - tB;
             }
 
-            // Numeric sorting
             if (typeof A === "number" && typeof B === "number") {
                 return sortDesc ? B - A : A - B;
             }
 
-            // String sorting
             const sA = String(A || "").toUpperCase();
             const sB = String(B || "").toUpperCase();
             if (sA < sB) return sortDesc ? 1 : -1;
@@ -147,16 +146,14 @@ export default function HistoryScreen() {
         <View style={globalStyles.HST_container}>
             <Text style={globalStyles.HST_title}>Historial de Partidas</Text>
 
-            {/* ERRORS */}
             {errorMsg ? (
                 <View style={{ padding: 16 }}>
                     <Text style={{ color: "#fff", marginBottom: 8 }}>
                         Error: {errorMsg}
                     </Text>
                     <Text style={{ color: "#fff" }}>
-                        Puedes necesitar un índice compuesto en Firestore:
-                        <Text style={{ fontWeight: "700" }}> delete_mark (ASC) </Text> +
-                        <Text style={{ fontWeight: "700" }}> matchDate (DESC)</Text>.
+                        Puede ser necesario un índice compuesto:
+                        delete_mark (ASC) + matchDate (DESC)
                     </Text>
                 </View>
             ) : (
@@ -172,11 +169,9 @@ export default function HistoryScreen() {
                                 onValueChange={(v) => setSortColumn(v as any)}
                             >
                                 <Picker.Item label="Fecha" value="matchDate" />
-                                <Picker.Item label="Campo" value="fieldName" />
-                                <Picker.Item label="Modo" value="gameMode" />
+                                <Picker.Item label="Puntos" value="score" />
                                 <Picker.Item label="Kills" value="kills" />
                                 <Picker.Item label="Muertes" value="deaths" />
-                                <Picker.Item label="Puntos" value="score" />
                                 <Picker.Item label="Resultado" value="result" />
                             </Picker>
                         </View>
@@ -193,69 +188,81 @@ export default function HistoryScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* MATCH LIST */}
+                    {/* LIST */}
                     {sortedMatches.length === 0 ? (
                         <View style={{ padding: 16 }}>
-                            <Text style={{ color: "#fff" }}>No hay partidas todavía.</Text>
+                            <Text style={{ color: "#fff" }}>
+                                No hay partidas todavía.
+                            </Text>
                         </View>
                     ) : (
                         <FlatList
                             data={sortedMatches}
                             keyExtractor={(i) => i.id}
                             contentContainerStyle={{ paddingBottom: 50 }}
-                            renderItem={({ item }) => (
-                                <View style={globalStyles.HST_card}>
-                                    {/* HEADER */}
-                                    <View style={globalStyles.HST_cardHeader}>
-                                        <Text style={globalStyles.HST_cardDate}>
-                                            {formatDate(item.matchDate)}
+                            renderItem={({ item }) => {
+                                // *** Fallback inteligente ***
+                                const fieldDisplay =
+                                    item.fieldId
+                                        ? master.getName(item.fieldId)
+                                        : item.fieldName || "Campo desconocido";
+
+                                return (
+                                    <View style={globalStyles.HST_card}>
+                                        {/* HEADER */}
+                                        <View style={globalStyles.HST_cardHeader}>
+                                            <Text style={globalStyles.HST_cardDate}>
+                                                {formatDate(item.matchDate)}
+                                            </Text>
+                                            <Text style={globalStyles.HST_cardField}>
+                                                {fieldDisplay}
+                                            </Text>
+                                        </View>
+
+                                        {/* MODE */}
+                                        <Text style={globalStyles.HST_cardMode}>
+                                            Modo: {master.getName(item.gameMode)}
                                         </Text>
-                                        <Text style={globalStyles.HST_cardField}>
-                                            {item.fieldName}
+
+                                        {/* WEAPONS */}
+                                        <Text style={globalStyles.HST_cardWeapons}>
+                                            Armas: {master.getName(item.weapon1)} •{" "}
+                                            {master.getName(item.weapon2)}
                                         </Text>
+
+                                        {/* STATS */}
+                                        <Text style={globalStyles.HST_cardStats}>
+                                            Kills:{" "}
+                                            <Text style={globalStyles.HST_highlight}>
+                                                {item.kills}
+                                            </Text>{" "}
+                                            ‣ Muertes:{" "}
+                                            <Text style={globalStyles.HST_highlight}>
+                                                {item.deaths}
+                                            </Text>
+                                        </Text>
+
+                                        {/* RESULT + SCORE */}
+                                        <View style={globalStyles.HST_cardFooter}>
+                                            <Text
+                                                style={[
+                                                    globalStyles.HST_result,
+                                                    master.getName(item.result) ===
+                                                        "Victoria"
+                                                        ? globalStyles.HST_win
+                                                        : globalStyles.HST_lose,
+                                                ]}
+                                            >
+                                                {master.getName(item.result)}
+                                            </Text>
+
+                                            <Text style={globalStyles.HST_points}>
+                                                Puntos: {item.score}
+                                            </Text>
+                                        </View>
                                     </View>
-
-                                    {/* MODE */}
-                                    <Text style={globalStyles.HST_cardMode}>
-                                        Modo: {master.gameModes[item.gameMode!] || item.gameMode}
-                                    </Text>
-
-                                    {/* WEAPONS */}
-                                    <Text style={globalStyles.HST_cardWeapons}>
-                                        Armas: {master.guns[item.weapon1!] || item.weapon1} •{" "}
-                                        {master.guns[item.weapon2!] || item.weapon2}
-                                    </Text>
-
-                                    {/* STATS */}
-                                    <Text style={globalStyles.HST_cardStats}>
-                                        Kills:{" "}
-                                        <Text style={globalStyles.HST_highlight}>{item.kills}</Text>{" "}
-                                        ‣ Muertes:{" "}
-                                        <Text style={globalStyles.HST_highlight}>
-                                            {item.deaths}
-                                        </Text>
-                                    </Text>
-
-                                    {/* RESULT + SCORE */}
-                                    <View style={globalStyles.HST_cardFooter}>
-                                        <Text
-                                            style={[
-                                                globalStyles.HST_result,
-                                                (master.results[item.result!] || item.result) ===
-                                                    "Victoria"
-                                                    ? globalStyles.HST_win
-                                                    : globalStyles.HST_lose,
-                                            ]}
-                                        >
-                                            {master.results[item.result!] || item.result}
-                                        </Text>
-
-                                        <Text style={globalStyles.HST_points}>
-                                            Puntos: {item.score}
-                                        </Text>
-                                    </View>
-                                </View>
-                            )}
+                                );
+                            }}
                         />
                     )}
                 </>

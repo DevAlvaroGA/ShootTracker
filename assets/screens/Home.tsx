@@ -25,7 +25,7 @@ import {
   orderBy,
   limit,
   onSnapshot,
-  Timestamp
+  Timestamp, doc, getDoc
 } from "firebase/firestore";
 
 import { LineChart } from "react-native-chart-kit";
@@ -53,6 +53,7 @@ export default function HomeScreen({
 }: NativeStackScreenProps<RootStackParamList, "Home">) {
 
   const [lastMatches, setLastMatches] = useState<Match[]>([]);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
   const master = useMaster();
 
   // ----------------- MENÚ -----------------
@@ -66,6 +67,28 @@ export default function HomeScreen({
       return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [])
   );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+
+      const loadProfilePic = async () => {
+        try {
+          const snap = await getDoc(doc(db, "game_profile", uid));
+          if (snap.exists()) {
+            setProfilePic(snap.data().PROFILE_PIC_URL ?? null);
+          }
+        } catch (e) {
+          console.log("Error cargando foto de perfil:", e);
+        }
+      };
+
+      loadProfilePic();
+    }, [])
+  );
+
+
 
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
@@ -178,9 +201,14 @@ export default function HomeScreen({
         style={[globalStyles.HM_menuContainer, { left: slideAnim }]}
       >
         <Image
-          source={require("../images/default_profile.png")}
+          source={
+            profilePic
+              ? { uri: profilePic }
+              : require("../images/default_profile.png")
+          }
           style={globalStyles.HM_menuProfile}
         />
+
 
         <TouchableOpacity style={globalStyles.HM_menuItem} onPress={() => navigateTo("Profile")}>
           <Ionicons name="person-outline" size={24} color="#ff8800" />

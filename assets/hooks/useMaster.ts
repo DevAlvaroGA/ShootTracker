@@ -1,3 +1,4 @@
+// hooks/useMaster.ts
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
@@ -13,12 +14,12 @@ export function useMaster() {
 
     useEffect(() => {
         const load = async () => {
+            // MASTER
             const snap = await getDocs(collection(db, "master"));
             const modes: MasterMap = {};
             const pg: MasterMap = {};
             const sg: MasterMap = {};
             const res: MasterMap = {};
-            const fld: MasterMap = {};
 
             snap.forEach((d) => {
                 const data = d.data();
@@ -35,11 +36,7 @@ export function useMaster() {
                         break;
 
                     case "results":
-                        res[d.id] = data.name;   // Victoria/Empate/Derrota
-                        break;
-
-                    case "fields":
-                        fld[d.id] = data.name;
+                        res[d.id] = data.name;
                         break;
                 }
             });
@@ -48,18 +45,31 @@ export function useMaster() {
             setPrimaryGuns(pg);
             setSecondaryGuns(sg);
             setResults(res);
+
+            // FIELDS
+            const fieldsSnap = await getDocs(collection(db, "fields"));
+            const fld: MasterMap = {};
+
+            fieldsSnap.forEach((d) => {
+                const data = d.data();
+                if (data.name) fld[d.id] = data.name;
+            });
+
             setFields(fld);
         };
 
         load();
     }, []);
 
-    // Convertir mapas en listas DropDownPicker
-    const mapToList = (m: MasterMap) =>
-        Object.entries(m).map(([id, name]) => ({
-            label: name,
-            value: id,
-        }));
+    const getName = (id?: string | null) =>
+        id
+            ? fields[id] ||
+            gameModes[id] ||
+            primaryGuns[id] ||
+            secondaryGuns[id] ||
+            results[id] ||
+            "—"
+            : "—";
 
     return {
         gameModes,
@@ -67,22 +77,6 @@ export function useMaster() {
         secondaryGuns,
         results,
         fields,
-
-        gameModesList: mapToList(gameModes),
-        primaryGunsList: mapToList(primaryGuns),
-        secondaryGunsList: mapToList(secondaryGuns),
-        resultsList: mapToList(results),
-
-        getName: (id?: string | null) => {
-            if (!id) return "—";
-            return (
-                gameModes[id] ||
-                primaryGuns[id] ||
-                secondaryGuns[id] ||
-                results[id] ||
-                fields[id] ||
-                "—"
-            );
-        },
+        getName,
     };
 }
