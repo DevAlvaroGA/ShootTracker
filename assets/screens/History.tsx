@@ -7,9 +7,10 @@ import {
     FlatList,
     TouchableOpacity,
 } from "react-native";
-
+import { getAuth } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import { useFields } from "../hooks/useFields";
 
 import { db } from "@/firebaseConfig";
 import {
@@ -68,19 +69,27 @@ export default function HistoryScreen() {
     const [sortColumn, setSortColumn] = useState<keyof Match>("matchDate");
     const [sortDesc, setSortDesc] = useState(true);
 
+
+    const auth = getAuth();
+    const uid = auth.currentUser?.uid;
+
+
     const master = useMaster();
+    const { fields } = useFields();
+
 
     // ------------------------------
     // LOAD MATCHES
     // ------------------------------
     useEffect(() => {
         setLoading(true);
-
         const q = query(
             collection(db, "games"),
             where("delete_mark", "==", "N"),
+            where("uid", "==", uid),
             orderBy("matchDate", "desc")
         );
+
 
         const unsub = onSnapshot(
             q,
@@ -204,8 +213,12 @@ export default function HistoryScreen() {
                                 // *** Fallback inteligente ***
                                 const fieldDisplay =
                                     item.fieldId
-                                        ? master.getName(item.fieldId)
+                                        ? fields.find(f => f.id === item.fieldId)?.name
+                                        ?? item.fieldName
+                                        ?? "Campo desconocido"
                                         : item.fieldName || "Campo desconocido";
+
+
 
                                 return (
                                     <View style={globalStyles.HST_card}>
