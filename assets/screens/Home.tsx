@@ -9,7 +9,8 @@ import {
   Dimensions,
   Animated,
   ScrollView,
-  BackHandler
+  BackHandler,
+  Alert
 } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -88,6 +89,14 @@ export default function HomeScreen({
     }, [])
   );
 
+  const handleMapComingSoon = () => {
+    toggleMenu();
+    Alert.alert(
+      "Próximamente",
+      "La funcionalidad de mapa estará disponible en futuras versiones de la aplicación.",
+      [{ text: "Entendido", style: "default" }]
+    );
+  };
 
 
   useEffect(() => {
@@ -225,10 +234,14 @@ export default function HomeScreen({
           <Text style={globalStyles.HM_menuText}>Historial</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={globalStyles.HM_menuItem} onPress={() => navigateTo("Map")}>
+        <TouchableOpacity
+          style={globalStyles.HM_menuItem}
+          onPress={handleMapComingSoon}
+        >
           <Ionicons name="map-outline" size={24} color="#ff8800" />
           <Text style={globalStyles.HM_menuText}>Mapa</Text>
         </TouchableOpacity>
+
 
         <TouchableOpacity style={globalStyles.HM_menuItem} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={24} color="#ff8800" />

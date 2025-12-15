@@ -438,7 +438,7 @@ export default function ProfileScreen() {
                         Victorias: {victories}
                     </Text>
                     <Text style={globalStyles.PRF_statsText}>
-                        Winrate: {winRate}%
+                        Rango de victorias: {winRate}%
                     </Text>
                     <Text style={globalStyles.PRF_statsText}>
                         Puntos totales: {totalPoints}
