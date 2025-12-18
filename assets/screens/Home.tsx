@@ -1,41 +1,18 @@
-// assets/screens/Home.tsx
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-  Image,
-  Dimensions,
-  Animated,
-  ScrollView,
-  BackHandler,
-  Alert
-} from "react-native";
-
+import { View, Text, TouchableOpacity, SafeAreaView, Image, Dimensions, Animated, ScrollView, BackHandler, Alert } from "react-native";
+import { collection, query, where, orderBy, limit, onSnapshot, Timestamp, doc, getDoc } from "firebase/firestore";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { globalStyles } from "../components/globalStyles";
+import { useFocusEffect } from "@react-navigation/native";
+import type { RootStackParamList } from "../../App";
+import React, { useEffect, useState } from "react";
+import { LineChart } from "react-native-chart-kit";
+import { useMaster } from "../hooks/useMaster";
+import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "@/firebaseConfig";
 import { signOut } from "firebase/auth";
 
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  onSnapshot,
-  Timestamp, doc, getDoc
-} from "firebase/firestore";
-
-import { LineChart } from "react-native-chart-kit";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
-
-import { useMaster } from "../hooks/useMaster";
-import type { RootStackParamList } from "../../App";
-
+// Tipado de datos de una partida
 type Match = {
   id: string;
   kills: number;
@@ -53,6 +30,7 @@ export default function HomeScreen({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, "Home">) {
 
+  // ----------------- ESTADOS -----------------
   const [lastMatches, setLastMatches] = useState<Match[]>([]);
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const master = useMaster();
@@ -61,6 +39,7 @@ export default function HomeScreen({
   const [menuOpen, setMenuOpen] = useState(false);
   const slideAnim = useState(new Animated.Value(-250))[0];
 
+  // Deshabilitar botón de retroceso en Android cuando el menú está abierto
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => true;
@@ -70,6 +49,7 @@ export default function HomeScreen({
   );
 
   useFocusEffect(
+    // Cargar la foto de perfil cuando se inicie la aplicación
     React.useCallback(() => {
       const uid = auth.currentUser?.uid;
       if (!uid) return;
@@ -89,6 +69,7 @@ export default function HomeScreen({
     }, [])
   );
 
+  // Aviso de funcionalidad próxima
   const handleMapComingSoon = () => {
     toggleMenu();
     Alert.alert(
@@ -98,7 +79,7 @@ export default function HomeScreen({
     );
   };
 
-
+  // ----------------- AUTENTICACIÓN -----------------
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
       if (!user) navigation.replace("Login");
@@ -111,6 +92,7 @@ export default function HomeScreen({
     const uid = auth.currentUser?.uid;
     if (!uid) return;
 
+    //Consultar la colección de partidas
     const q = query(
       collection(db, "games"),
       where("uid", "==", uid),
@@ -119,6 +101,7 @@ export default function HomeScreen({
       limit(5)
     );
 
+    //Suscribir al snapshot de la colección
     const unsub = onSnapshot(q, (snapshot) => {
       const data: Match[] = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -134,6 +117,7 @@ export default function HomeScreen({
   const screenWidth = Dimensions.get("window").width - 20;
   const chartLabels = lastMatches.map((_, i) => `Partida ${i + 1}`);
 
+  //Funcion para abrir o cerrar el menú lateral
   const toggleMenu = () => {
     if (menuOpen) {
       Animated.timing(slideAnim, {
@@ -151,6 +135,7 @@ export default function HomeScreen({
     }
   };
 
+  //Función para navegar a otras pantallas
   const navigateTo = (screen: keyof RootStackParamList) => {
     toggleMenu();
     navigation.navigate(screen as any);

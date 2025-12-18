@@ -1,38 +1,18 @@
-// assets/screens/NewGame.tsx
-import React, { useState } from "react";
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    SafeAreaView,
-    ScrollView,
-} from "react-native";
-
+import { collection, addDoc, serverTimestamp, Timestamp, getDoc, doc, } from "firebase/firestore";
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import FieldSelectorModal from "../components/FieldSelectorModal";
+import { globalStyles } from "../components/globalStyles";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
-import Toast from "react-native-toast-message";
-
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../App";
-
-import { db } from "@/firebaseConfig";
-import {
-    collection,
-    addDoc,
-    serverTimestamp,
-    Timestamp,
-    getDoc,
-    doc,
-} from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-
-import { Ionicons } from "@expo/vector-icons";
-
-import { globalStyles } from "../components/globalStyles";
 import { useMaster } from "../hooks/useMaster";
+import Toast from "react-native-toast-message";
 import { useFields } from "../hooks/useFields";
-import FieldSelectorModal from "../components/FieldSelectorModal";
+import { Ionicons } from "@expo/vector-icons";
+import { getAuth } from "firebase/auth";
+import React, { useState } from "react";
+import { db } from "@/firebaseConfig";
 
 export default function NewGame({
     navigation,
@@ -50,7 +30,7 @@ export default function NewGame({
     const { fields, addField } = useFields();
     const [modalOpen, setModalOpen] = useState(false);
 
-    // ⚠️ CAMBIO REAL: guardamos ID + nombre
+    // CAMBIO REAL: guardamos ID + nombre
     const preselectedField = route?.params?.fieldName ?? "";
     const [fieldId, setFieldId] = useState<string | null>(null);
     const [fieldName, setFieldName] = useState(preselectedField);

@@ -1,10 +1,15 @@
-// hooks/useMaster.ts
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
 
+// ----------------------
+// Types & Interfaces
+// ----------------------
 type MasterMap = Record<string, string>;
 
+// ----------------------
+// Hook: useMaster
+// ----------------------
 export function useMaster() {
     const [gameModes, setGameModes] = useState<MasterMap>({});
     const [primaryGuns, setPrimaryGuns] = useState<MasterMap>({});

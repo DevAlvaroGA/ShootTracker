@@ -1,37 +1,17 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-  ActivityIndicator,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-  Switch,
-} from "react-native";
-
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { globalStyles } from "../components/globalStyles";
-
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithCredential,
-} from "firebase/auth";
-
-import { auth, db } from "@/firebaseConfig";
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ActivityIndicator, ImageBackground, KeyboardAvoidingView, Platform, Image, Switch, } from "react-native";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential, } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Google from "expo-auth-session/providers/google";
+import { globalStyles } from "../components/globalStyles";
+import React, { useState, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
 import { Ionicons } from "@expo/vector-icons";
+import { auth, db } from "@/firebaseConfig";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+// Navigation stack types
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
@@ -39,8 +19,10 @@ type RootStackParamList = {
   ForgotPassword: undefined;
 };
 
+// Completar sesión de autenticación web
 WebBrowser.maybeCompleteAuthSession();
 
+// Componente de pantalla de inicio de sesión y estados
 const LoginScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, "Login">) => {

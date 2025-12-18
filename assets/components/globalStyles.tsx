@@ -1,6 +1,5 @@
-// globalStyles.tsx
 import { StyleSheet, Dimensions } from 'react-native';
-import * as Colors from './colors'; // Asumiendo que tienes este archivo de colores
+import * as Colors from './colors';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,12 +23,12 @@ export const globalStyles = StyleSheet.create({
         height: 56,
         backgroundColor: 'transparent',
         borderWidth: 2,
-        borderColor: Colors.naranjaPrincipal, // O Colors.primaryOrange
+        borderColor: Colors.naranjaPrincipal,
         borderRadius: 8,
         paddingHorizontal: 20,
         fontSize: 16,
         color: Colors.blanco,
-        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+        fontFamily: 'Michroma',
     },
     inputPasswordContainer: {
         flexDirection: "row",
@@ -50,7 +49,7 @@ export const globalStyles = StyleSheet.create({
     },
 
 
-    //---------------- IMAGEN DE FONDO (Si usas un enfoque de fondo con dos capas, como se sugiere aquí)
+    //---------------- IMAGEN DE FONDO ----------------
     containerFondo: {
         flex: 1,
     },
@@ -103,9 +102,6 @@ export const globalStyles = StyleSheet.create({
     //---------------- LOGIN ----------------
     backgroundImage: {
         flex: 1,
-        // Eliminadas las propiedades de layout de aquí.
-        // La ImageBackground solo necesita flex: 1 para ocupar el espacio.
-        // El resizeMode se aplica directamente en el componente ImageBackground en el JSX.
     },
     gradient: {
         flex: 1,
@@ -121,10 +117,10 @@ export const globalStyles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 40,
     },
-    logoText: { // Asegúrate de que este estilo exista si planeas usar el logo
+    logoText: {
         fontSize: 42,
         fontWeight: 'bold',
-        color: Colors.naranjaPrincipal, // O Colors.primaryOrange si tienes un archivo de colores
+        color: Colors.naranjaPrincipal,
         textAlign: 'center',
         letterSpacing: 3,
         textShadowColor: 'rgba(0,0,0,0.8)',
@@ -185,12 +181,12 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: 'transparent',
         marginBottom: 15,
         borderWidth: 2,
-        borderColor: Colors.naranjaPrincipal, // O Colors.primaryOrange
+        borderColor: Colors.naranjaPrincipal,
         borderRadius: 8,
         paddingHorizontal: 20,
         fontSize: 16,
         color: Colors.blanco,
-        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+        fontFamily: 'Michroma',
     },
     // ---------------- LOGIN - NEW STYLES ----------------
 
@@ -217,7 +213,6 @@ export const globalStyles = StyleSheet.create({
         marginRight: 12,
         backgroundColor: "#fff",
         borderRadius: 4,
-        //backgroundImage: "url('../images/google_icon.png')", // si usas ícono externo cámbialo a <Image>
     },
 
     LOGIN_googleText: {
@@ -239,7 +234,7 @@ export const globalStyles = StyleSheet.create({
         paddingHorizontal: 20,
         fontSize: 16,
         color: Colors.blanco,
-        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+        fontFamily: 'Michroma',
     },
     REGISTER_formContainer: {
         flex: 1,
@@ -290,7 +285,7 @@ export const globalStyles = StyleSheet.create({
         paddingHorizontal: 20,
         fontSize: 16,
         color: Colors.gris,
-        fontFamily: 'Michroma', // Asegúrate de que la fuente esté correctamente vinculada
+        fontFamily: 'Michroma',
     },
     PASSWORD_formContainer: {
         flex: 1,
@@ -306,7 +301,7 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 20,
     },
     PASSWORD_Button: {
-        backgroundColor: Colors.naranjaPrincipal, // O Colors.primaryOrange
+        backgroundColor: Colors.naranjaPrincipal,
         width: '80%',
         height: 56,
         borderRadius: 8,
@@ -590,7 +585,7 @@ export const globalStyles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
         marginBottom: 12,
-        color: "#fff",            // <-- TEXTO VISIBLE
+        color: "#fff",
         fontFamily: "Michroma",
     },
 
@@ -656,7 +651,7 @@ export const globalStyles = StyleSheet.create({
         borderColor: "#FF8800",
         borderRadius: 10,
         padding: 10,
-        color: "#fff",            // <-- TEXTO VISIBLE
+        color: "#fff",
         fontFamily: "Michroma",
     },
 
@@ -991,7 +986,7 @@ export const globalStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#222",
         overflow: "visible",
-        position: "relative",   // <- Añadido
+        position: "relative",
     },
 
     PRF_infoLabel: {
@@ -1027,7 +1022,7 @@ export const globalStyles = StyleSheet.create({
         marginTop: 6,
         zIndex: 1,
         elevation: 1,
-        position: "relative",   // <- Añadido
+        position: "relative",
     },
 
     PRF_dropdown: {

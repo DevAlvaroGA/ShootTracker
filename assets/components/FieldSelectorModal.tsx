@@ -1,8 +1,10 @@
-// assets/components/FieldSelectorModal.tsx
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, ScrollView, TextInput } from "react-native";
 import { globalStyles } from "../components/globalStyles";
 
+// ----------------------
+// Types & Interfaces
+// ----------------------
 type FieldItem = {
     id: string;
     name: string;
@@ -12,10 +14,13 @@ type Props = {
     visible: boolean;
     onClose: () => void;
     fields: FieldItem[];
-    onSelect: (field: FieldItem) => void;   // ⚠️ cambio
+    onSelect: (field: FieldItem) => void;
     onCreate: (name: string) => void;
 };
 
+// ----------------------
+// Component
+// ----------------------
 export default function FieldSelectorModal({
     visible,
     onClose,
@@ -37,7 +42,7 @@ export default function FieldSelectorModal({
                                 key={f.id}
                                 style={globalStyles.MODAL_item}
                                 onPress={() => {
-                                    onSelect(f);   // ⚠️ cambio
+                                    onSelect(f);
                                     onClose();
                                 }}
                             >

@@ -3,11 +3,17 @@ import { collection, getDocs, addDoc, serverTimestamp, onSnapshot } from "fireba
 import { db } from "@/firebaseConfig";
 import { getAuth } from "firebase/auth";
 
+// ----------------------
+// Types & Interfaces
+// ----------------------
 export type FieldItem = {
     id: string;
     name: string;
 };
 
+// ----------------------
+// Hook: useFields
+// ----------------------
 export function useFields() {
     const [fields, setFields] = useState<FieldItem[]>([]);
     const [loading, setLoading] = useState(true);

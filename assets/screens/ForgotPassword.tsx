@@ -1,29 +1,22 @@
-import React, { useState } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    SafeAreaView,
-    ImageBackground,
-    ActivityIndicator
-} from 'react-native';
-
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ImageBackground, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { auth } from '@/firebaseConfig';
-import { sendPasswordResetEmail } from 'firebase/auth';
 import { globalStyles } from '../components/globalStyles';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import Toast from "react-native-toast-message";
+import React, { useState } from 'react';
+import { auth } from '@/firebaseConfig';
 
+// Navigation stack types
 type RootStackParamList = {
     Login: undefined;
     ForgotPassword: undefined;
 };
-
+// Propiedades del componente
 const ForgotPasswordScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'ForgotPassword'>) => {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Control de eventos
     const handlePasswordReset = async () => {
         if (!email.trim()) {
             return Toast.show({
@@ -73,6 +66,7 @@ const ForgotPasswordScreen = ({ navigation }: NativeStackScreenProps<RootStackPa
         }
     };
 
+    // Renderizado del componente
     return (
         <SafeAreaView style={globalStyles.container}>
             <ImageBackground

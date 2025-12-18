@@ -1,15 +1,11 @@
-// assets/screens/Register.tsx
-import React, { useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity, SafeAreaView,
-  ScrollView, KeyboardAvoidingView, Platform, ImageBackground, ActivityIndicator
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, ImageBackground, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { globalStyles } from '../components/globalStyles';
 import Toast from 'react-native-toast-message';
 import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from 'react';
 
-
+// Navigation stack types
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
@@ -17,16 +13,15 @@ type RootStackParamList = {
   Register2: { email: string; password: string };
 };
 
+// Componente de pantalla de registro
 const RegisterScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Register'>) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); //Validación de correo mediante expresiones regulares
   const validatePassword = (p: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(p);
 
   const handleRegister = () => {

@@ -1,20 +1,18 @@
-// assets/screens/Register2.tsx
-import React, { useState } from "react";
-import {
-    View, Text, TextInput, TouchableOpacity, SafeAreaView,
-    ScrollView, KeyboardAvoidingView, Platform, ImageBackground, ActivityIndicator
-} from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Picker } from "@react-native-picker/picker";
-import { globalStyles } from "../components/globalStyles";
-import { db, auth } from "@/firebaseConfig";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, ImageBackground, ActivityIndicator } from "react-native";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import Toast from "react-native-toast-message";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { globalStyles } from "../components/globalStyles";
+import { Picker } from "@react-native-picker/picker";
 import type { RootStackParamList } from "../../App";
+import Toast from "react-native-toast-message";
+import { db, auth } from "@/firebaseConfig";
+import React, { useState } from "react";
 
+// Navigation stack types
 type Props = NativeStackScreenProps<RootStackParamList, "Register2">;
 
+// Componente de pantalla de registro
 export default function Register2({ navigation, route }: Props) {
     const { email = "", password = "" } = route.params ?? {};
     const [name, setName] = useState("");
@@ -24,6 +22,7 @@ export default function Register2({ navigation, route }: Props) {
     const [year, setYear] = useState(2000);
     const [loading, setLoading] = useState(false);
 
+    // Control de eventos
     const handleSaveData = async () => {
         if (!name.trim() || !surnames.trim()) {
             return Toast.show({
@@ -51,6 +50,7 @@ export default function Register2({ navigation, route }: Props) {
         setLoading(true);
 
         try {
+            // Crear usuario
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             const uid = userCred.user.uid;
 
@@ -85,6 +85,7 @@ export default function Register2({ navigation, route }: Props) {
         }
     };
 
+    // UI
     return (
         <SafeAreaView style={globalStyles.container}>
             <ImageBackground

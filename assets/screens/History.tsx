@@ -1,28 +1,13 @@
-// assets/screens/History.tsx
+import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, } from "react-native";
+import { collection, where, query, onSnapshot, orderBy, } from "firebase/firestore";
 import React, { useEffect, useState, useMemo } from "react";
-import {
-    View,
-    Text,
-    ActivityIndicator,
-    FlatList,
-    TouchableOpacity,
-} from "react-native";
-import { getAuth } from "firebase/auth";
-import { Ionicons } from "@expo/vector-icons";
+import { globalStyles } from "../components/globalStyles";
 import { Picker } from "@react-native-picker/picker";
 import { useFields } from "../hooks/useFields";
-
-import { db } from "@/firebaseConfig";
-import {
-    collection,
-    where,
-    query,
-    onSnapshot,
-    orderBy,
-} from "firebase/firestore";
-
-import { globalStyles } from "../components/globalStyles";
 import { useMaster } from "../hooks/useMaster";
+import { Ionicons } from "@expo/vector-icons";
+import { getAuth } from "firebase/auth";
+import { db } from "@/firebaseConfig";
 
 // ----------------------
 // Types
@@ -30,10 +15,8 @@ import { useMaster } from "../hooks/useMaster";
 type Match = {
     id: string;
     matchDate?: any;
-
-    fieldId?: string;     // Nuevo campo correcto
-    fieldName?: string;   // Legacy para partidas antiguas
-
+    fieldId?: string;
+    fieldName?: string;
     gameMode?: string;
     weapon1?: string;
     weapon2?: string;
